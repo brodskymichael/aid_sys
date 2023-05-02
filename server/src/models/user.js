@@ -1,18 +1,39 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Mongoose } from "mongoose";
 
-const userSchema = new Schema({
-    mail: {
+
+
+const UserSchema = new Schema({
+    user: {
         type: String,
     },
-    group:{
+    name:{
         type: String,
-    } 
+    },
+    surname:{
+        type: String,
+    },
+    workGroup:{
+        type: Number,
+    },
+    userType:{
+        type: String,
+    },
+    pwd:{
+        type: String,
+    },
+    breaks:{ 
+        type: Number,
+    },
+    counter: {
+        type: Number,
+    }
+    
 },
     {
         timestamps: true,
         versionKey: false,
     });
 
-const newstModel = model("User", userSchema);
+const newstModel = model("User", UserSchema);
 
 export default newstModel;

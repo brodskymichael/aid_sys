@@ -7,7 +7,7 @@ export async function dbConn(){
 
     const url = 'mongodb://127.0.0.1:27017/spec'
 
-    mongoose.connect(url,{
+   mongoose.connect(url,{
     })
     .then(() => {
         console.log('Database connected to ATLAS')

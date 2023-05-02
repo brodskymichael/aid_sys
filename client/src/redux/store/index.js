@@ -5,4 +5,5 @@ import rootReducer from "../reducer/index.js";
 
 
 
+
 export const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
