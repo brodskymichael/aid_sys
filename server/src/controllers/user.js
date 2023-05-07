@@ -44,6 +44,7 @@ export  const postUser = async (req, res) => {
         breaks: 0,
         counter:0
     }
+    const mood = 1;
     try{
         return  await User.create({
             user,
@@ -52,7 +53,8 @@ export  const postUser = async (req, res) => {
             workGroup,
             userType,
             pwd,
-            states
+            states,
+            mood
         })
         
         //newuser.save()

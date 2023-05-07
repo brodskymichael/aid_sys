@@ -26,6 +26,9 @@ const UserSchema = new Schema({
     },
     counter: {
         type: Number,
+    },
+    mood:{
+        type: Number
     }
     
 },
