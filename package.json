@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "rollup": "^3.21.5",
     "vite": "^4.3.5"
   },
   "scripts": {
