@@ -223,7 +223,7 @@ const Login = () => {
                         </form>
 
 
-                                <h6>Don't have an account?<Link to={'/'} style={{color: '#e14e10'}}> Sing up!</Link></h6>
+                                <h6>Don't have an account?<Link to={'/'} style={{color: '#e14e10'}}> Sign up!</Link></h6>
 
                         
                        
