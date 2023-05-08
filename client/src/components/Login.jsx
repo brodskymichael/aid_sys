@@ -149,7 +149,6 @@ const Login = () => {
         ):(
             
             <Row>
-            <div>HOLA</div>
             <Col  md={5}>
                 <Container>
                     <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
