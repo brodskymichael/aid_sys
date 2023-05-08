@@ -8,6 +8,7 @@ import '../styles/Register.css';
 import foto from '../assets/signUp.png';
 import titulo from '../assets/titulo.png';
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 
@@ -300,7 +301,7 @@ const Register = () => {
                             <button className="btn " disabled={!validUser || !validPwd || !validMatch ? true : false} >Register Account</button>
                             </Form.Group>
                         </form>
-                            
+                        <h6>You already have an account?<Link to={'/login'} style={{color: '#e14e10'}}> Log in!</Link></h6>
                         </Container>
                         </Col>
                         <Col  md={7} >
