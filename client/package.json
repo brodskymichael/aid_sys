@@ -37,6 +37,7 @@
     "redux-mock-store": "^1.5.4",
     "redux-store": "^0.0.0",
     "redux-thunk": "^2.4.2",
+    "rollup": "^3.21.5",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
