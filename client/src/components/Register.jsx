@@ -122,7 +122,7 @@ const Register = () => {
 
                 ) : (
                     <Row>
-                    <div>GOLA</div>
+                    
                     <Col  md={5}>
                     <Container>
                         <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
