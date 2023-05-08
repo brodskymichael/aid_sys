@@ -6,7 +6,7 @@ import { getUsers } from './controllers/user.js';
 export async function dbConn(){
 
     //const url = 'mongodb://127.0.0.1:27017/spec'
-    const url = 'mongodb+srv://spec:12345@cluster0.npwwug2.mongodb.net/?retryWrites=true&w=majority'
+    const url = 'mongodb+srv://spec:12345@cluster0.npwwug2.mongodb.net/spec?retryWrites=true&w=majority'
 
    mongoose.connect(url,{
     })
