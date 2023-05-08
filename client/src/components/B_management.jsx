@@ -26,7 +26,7 @@ import csv from '../assets/csv.svg';
 import { Link } from "react-router-dom";
 
 
-const UsersB = () => {
+const B_management = () => {
     const [hora, setHora] = useState('');
     const [fecha, setFecha] = useState('');
     const [search, setSearch] = useState('');
@@ -170,11 +170,9 @@ const UsersB = () => {
             <ul>
                 <br/>
                 <Link to= '/B'>
-                <button className='boton-selected'><img src={brujula} width='25px' height='25px'/> Users</button>
+                <button className='boton-side-bar'><img src={brujula} width='25px' height='25px'/> Users</button>
                 </Link>
-                <Link to= '/B/management'>
-                <button className='boton-side-bar'><img src={management} width='25px' height='25px'/> Management</button>
-                </Link>
+                <button className='boton-selected'><img src={management} width='25px' height='25px'/> Management</button>
                 <button className='boton-side-bar'><img src={settings} width='25px' height='25px'/> Users</button>   
             </ul>
             <ul>
@@ -231,4 +229,4 @@ const UsersB = () => {
         </>
     )
 }
-export default UsersB;
+export default B_management;

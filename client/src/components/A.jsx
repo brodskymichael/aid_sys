@@ -12,6 +12,7 @@ import { logoutUser, updateStates, updateStatesBreak, getUserA } from '../redux/
 import { useDispatch } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import Cookie from 'js-cookie';
+import Example from './ModalEmojis';
 
 
 
@@ -28,6 +29,11 @@ const UsersA = () => {
 
     const navigate = useNavigate();
     //console.log(usuario)
+
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     const getUsuarioA = async()=>{
         setUsuario(await dispatch(getUserA({name:location.state.userName})));
@@ -94,7 +100,8 @@ const UsersA = () => {
     useEffect(() => {
         mostrarFecha();
         //temporizador()
-        
+        handleShow();
+       
     },[hora, fecha])
 
     useEffect(()=>{
@@ -109,7 +116,8 @@ const UsersA = () => {
    
 
     return(
-        <div>
+        <>
+            <div>
             <Row>
                 <Col md={4}>
                     <img src={titulo}></img>
@@ -178,7 +186,12 @@ const UsersA = () => {
 
             </Row>
             </div>
+            
         </div>
+        <Example show={show} handleClose={handleClose} usuario={usuario}/> 
+
+        </>
+        
         
     )
 }

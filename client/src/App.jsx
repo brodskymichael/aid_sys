@@ -5,6 +5,7 @@ import { RequireAuth } from 'react-auth-kit';
 import UsersA from './components/A';
 import UsersB from './components/B';
 import UsersC from './components/C';
+import B_magement from './components/B_management';
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route path='A' excat element={<UsersA/>}/>
           <Route path='B' exact element={<UsersB/>}/>
           <Route path='C' exact element={<UsersC/>}/>
+          <Route path='B/management' exact element={<B_magement/>}/>
         </Routes>
       </main>
     </BrowserRouter>
