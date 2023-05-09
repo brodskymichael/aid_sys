@@ -10,7 +10,7 @@ import { AuthProvider } from 'react-auth-kit';
 import axios from 'axios';
 //import refreshApi from "./refreshApi";
 //import { AuthProvider } from './context/AuthProvider';
-axios.defaults.baseURL = "https://vercel.com/milivetcher/spec-server/4TguCH49cVw6U3WrJFMuGAGKae4e" ;
+axios.defaults.baseURL = "https://spec-server.vercel.app/" ;
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
