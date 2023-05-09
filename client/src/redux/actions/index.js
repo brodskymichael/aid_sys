@@ -4,7 +4,7 @@ import axios from "axios";
 export  function postUsers(payload){
     console.log(payload)
     return async function(dispatch){
-        const json = await axios.post('https://spec-server.vercel.app/register', payload);
+        const json = await axios.post('http://localhost:9000/register', payload);
         console.log(json);
         return json;
     }
@@ -23,7 +23,7 @@ export function getUserA(payload){
 
 export function getUsers(){
     return async function(dispatch){
-        var json = await axios ('https://spec-server.vercel.app/users',{}); 
+        var json = await axios ('http://localhost:9000/users',{}); 
         return dispatch({
             type: 'GET_USERS',
             payload: json.data
