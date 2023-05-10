@@ -1,4 +1,4 @@
-import { Table, Button, Row, Col, Badge} from 'react-bootstrap';
+import { Table, Button, Row, Col, Badge, FormCheck} from 'react-bootstrap';
 import { useState, useEffect, useRef } from 'react';
 import { getUsers } from "../redux/actions/index";
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,7 +11,7 @@ import brujula from '../assets/brujula.svg';
 import management from '../assets/management.svg';
 import settings from '../assets/settings.svg';
 import lupa from '../assets/lupa.svg';
-import '../styles/B.css';
+import '../styles/B_management.css';
 import Form from 'react-bootstrap/Form';
 import logoutGris from '../assets/logoutGris.svg';
 import Cookie from 'js-cookie';
@@ -22,15 +22,21 @@ import { Tooltip } from 'primereact/tooltip';
 import excel from '../assets/excel.svg'
 import pdf from '../assets/pdf.svg';
 import csv from '../assets/csv.svg';
-
 import { Link } from "react-router-dom";
+import { InputSwitch } from 'primereact/inputswitch';
+import logouticon from '../assets/logout.svg';
+import { logoutUser} from '../redux/actions';
+
+import { useNavigate } from "react-router-dom";
+
+
 
 
 const B_management = () => {
     const [hora, setHora] = useState('');
     const [fecha, setFecha] = useState('');
     const [search, setSearch] = useState('');
-    
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const allusers = useSelector((state) => state.users);
     
@@ -69,58 +75,7 @@ const B_management = () => {
    
     const dt = useRef(null);
 
-    const cols = [
-        { field: 'name', header: 'Name' },
-        { field: 'breaks', header: 'Breaks' },
-        { field: 'counter', header: 'Counter' }
-    ];
-    
-
-    const exportColumns = cols.map((col) => ({ title: col.header, dataKey: col.field }));
-
-    const saveAsExcelFile = (buffer, fileName) => {
-        import('file-saver').then((module) => {
-            if (module && module.default) {
-                let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-                let EXCEL_EXTENSION = '.xlsx';
-                const data = new Blob([buffer], {
-                    type: EXCEL_TYPE
-                });
-
-                module.default.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
-            }
-        });
-    };
    
-
-    const exportCSV = (selectionOnly) => {
-        dt.current.exportCSV({ selectionOnly });
-    };
-
-    const exportPdf = () => {
-        import('jspdf').then((jsPDF) => {
-            import('jspdf-autotable').then(() => {
-                const doc = new jsPDF.default(0, 0);
-
-                doc.autoTable(exportColumns, allusersA);
-                doc.save('data.pdf');
-            });
-        });
-    };
-
-    const exportExcel = () => {
-        import('xlsx').then((xlsx) => {
-            const worksheet = xlsx.utils.json_to_sheet(allusersA);
-            const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
-            const excelBuffer = xlsx.write(workbook, {
-                bookType: 'xlsx',
-                type: 'array'
-            });
-
-            saveAsExcelFile(excelBuffer, 'data');
-        });
-    };
-    
    
     const mostrarHora = () =>{
         const now = new Date();
@@ -144,12 +99,24 @@ const B_management = () => {
 
     const actionBodyTemplate = (e) => {
         return <>
-            <button className="boton-send-media" onClick={handleShow}>Send Media</button>
-            <ModalUsersB show={show} handleClose={handleClose}/>
-                                    
+            <FormCheck></FormCheck>
         </>;
     };
-   
+    const logout =() =>{
+        try{
+            dispatch(logoutUser());
+            Cookie.remove('_auth');
+            Cookie.remove('_auth_storage');
+            Cookie.remove('_auth_state');
+            Cookie.remove('_auth_type')
+            navigate('/login')
+        }catch(e){
+            console.log(e)
+        }
+       
+    }
+    
+
     
     useEffect(() => {
         dispatch(getUsers())
@@ -184,45 +151,35 @@ const B_management = () => {
                 
             </ul>
             <ul>
-                <button className='boton-logout'>
-                    logout <img src={logoutGris} width='25px' height='25px'/>
-                </button>
+                <Button className="btnA " onClick={logout}>
+                    <img src={logouticon}/> Logout  
+                </Button>
             </ul>
             </Col>
 
          
 
-            <Col md={9} className='cuerpo'>
+            <Col md={9} className='cuerpo-m'>
                 <div>
-                    <h6>Hi {usersB.map((e)=>{return(e.name)})},</h6>
-                    <img src={welcome}></img>
+                    <h2  className='saludo'>Hello {usersB.map((e)=>{return(e.name)})}!</h2>
+                    <h6>So exited and happy to have you back!</h6>
+                </div>
+                <br/>
+                <div className='contenedor-tabla'>
+                    <input onChange={(e)=>Search(e)} placeholder='Search...' className='search-bar'></input>
+                    <DataTable ref={dt} value={usersA?usersA:allusersA} tableStyle={{ minWidth: '100%'}} className="table">
+                    <Column body={actionBodyTemplate} exportable={false}  className='colum'></Column>
+                        <Column field="user" header="User" className='colum'></Column>
+                        <Column field="workGroup" header="User Group"  className='colum'></Column>
+                    </DataTable>
                     
                 </div>
-                <br/>
-                <div>
-                    <Row>
-                        <Col> <h6>Users</h6></Col>
-                        <Col><button className="btn"><img src={addUser} width='25px' height='25px'/>  Add User</button></Col>
-                    </Row>
-                </div>
-                <br/>
+                <button className="boton-delete">
+                    Delete selected user  
+                </button>
                
-                <div className='contenedor-tabla'>
-                    <input onChange={(e)=>Search(e)}></input>
-                    <Tooltip target=".export-buttons>button" position="bottom" />
-                    <div className='contenedor-filters'>
-                        <button type="button" className='button-export' rounded onClick={() => exportCSV(false)} data-pr-tooltip="CSV" ><img src={csv} width='30px' height='35px'/></button>
-                        <button type="button" className='button-export' severity="success" rounded onClick={exportExcel} data-pr-tooltip="XLS" ><img src={excel} width='25px' height='30px'/></button>
-                        <button type="button" className='button-export' severity="warning" rounded onClick={exportPdf} data-pr-tooltip="PDF" ><img src={pdf} width='25px' height='30px'/></button>
-                    </div>
-                    <DataTable ref={dt} value={usersA?usersA:allusersA} tableStyle={{ minWidth: '100%'}} className="table">
-                        <Column field="name" header="Name" className='colum'></Column>
-                        <Column field="breaks" header="Breaks"  className='colum'></Column>
-                        <Column field="counter" header="Counter"  className='colum'></Column>
-                        <Column body={actionBodyTemplate} exportable={false}  className='colum'></Column>
-                    </DataTable>
-                </div>
             </Col>
+         
             </Row>
         </div> 
      

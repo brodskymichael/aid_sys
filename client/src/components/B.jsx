@@ -22,15 +22,17 @@ import { Tooltip } from 'primereact/tooltip';
 import excel from '../assets/excel.svg'
 import pdf from '../assets/pdf.svg';
 import csv from '../assets/csv.svg';
-
+import logouticon from '../assets/logout.svg';
+import { logoutUser} from '../redux/actions';
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 const UsersB = () => {
     const [hora, setHora] = useState('');
     const [fecha, setFecha] = useState('');
     const [search, setSearch] = useState('');
-    
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const allusers = useSelector((state) => state.users);
     
@@ -149,7 +151,19 @@ const UsersB = () => {
                                     
         </>;
     };
-   
+    const logout =() =>{
+        try{
+            dispatch(logoutUser());
+            Cookie.remove('_auth');
+            Cookie.remove('_auth_storage');
+            Cookie.remove('_auth_state');
+            Cookie.remove('_auth_type')
+            navigate('/login')
+        }catch(e){
+            console.log(e)
+        }
+       
+    }
     
     useEffect(() => {
         dispatch(getUsers())
@@ -186,9 +200,9 @@ const UsersB = () => {
                 
             </ul>
             <ul>
-                <button className='boton-logout'>
-                    logout <img src={logoutGris} width='25px' height='25px'/>
-                </button>
+            <Button className="btnA " onClick={logout}>
+                <img src={logouticon}/> Logout  
+            </Button>
             </ul>
             </Col>
 
@@ -210,7 +224,7 @@ const UsersB = () => {
                 <br/>
                
                 <div className='contenedor-tabla'>
-                    <input onChange={(e)=>Search(e)}></input>
+                    <input onChange={(e)=>Search(e)} placeholder='Search...' className='search-barr'></input>
                     <Tooltip target=".export-buttons>button" position="bottom" />
                     <div className='contenedor-filters'>
                         <button type="button" className='button-export' rounded onClick={() => exportCSV(false)} data-pr-tooltip="CSV" ><img src={csv} width='30px' height='35px'/></button>

@@ -45,21 +45,22 @@
 .titulo-tabla, th{
     color:grey;
 }
-.search-barr{
+.search-bar{
     margin-left: 10px;
     width: 30%;
-    border: 0;
-    border-bottom: 1px solid gray;
-    outline: 0;
+    border: solid 0.2px grey;
+    height: 35px;
+    border-radius: 12px;
     font-size: 17px;
-    padding: 7px 0;
+    padding: 10px;
     background: transparent;
+    margin-top: 10px; 
 }
 .lupa{
     margin-left: 10px;
 }
-.cuerpo{
-    background-color: #ffe5d9;
+.cuerpo-m{
+    background-color: #edede9;
     padding: 30px;
     height: 900px;
  
@@ -70,12 +71,14 @@
 .contenedor-head{
     padding: 2%;
 }
-.boton-logout{
+.boton-delete{
+    background-color: #e14e10;
     position: relative;
-    margin-top: 10%;
     width: 200px;
     border-radius: 12px;
+    color: white;
     border-style: hidden;
+    font-size: large;
 }
 .table{
     padding: 10px;
@@ -92,4 +95,7 @@
 .contenedor-filters{
     display: flex;
     justify-content: end;
+}
+.saludo{
+    color: #e14e10;
 }
