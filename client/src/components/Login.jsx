@@ -200,9 +200,10 @@ const Login = () => {
                                 ref={userRef}
                                 onChange={(e) => setUser(e.target.value)}
                                 value={user}
+                                required
 
                             >
-                                <option>Select User...</option>
+                                <option value="">Select User...</option>
                                 {
                                     allusersA?.map((e)=>{
                                       

@@ -13,6 +13,7 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.3",
     "nodemon": "^2.0.22",
+    "socket.io": "^4.6.1",
     "uuidv4": "^6.2.13"
   },
   "type": "module"

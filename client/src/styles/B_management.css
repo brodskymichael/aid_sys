@@ -99,3 +99,6 @@
 .saludo{
     color: #e14e10;
 }
+input[type='checkbox']{
+    margin-top:1rem;
+}

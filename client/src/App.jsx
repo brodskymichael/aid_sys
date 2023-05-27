@@ -6,9 +6,17 @@ import UsersA from './components/A';
 import UsersB from './components/B';
 import UsersC from './components/C';
 import B_magement from './components/B_management';
+import C_magement from './components/C_management';
+import C_settings from './components/C_settings';
+import B_settings from './components/B_settings';
+import socketIO from "socket.io-client";
 
+
+const socket = socketIO.connect("http://localhost:9000");
 
 function App() {
+
+  
 
   return (
     
@@ -18,10 +26,15 @@ function App() {
         <Routes>
           <Route path="/" exact element={ <Register/> } />
           <Route path="/login" exact element={ <Login/> } />
-          <Route path='A' excat element={<UsersA/>}/>
-          <Route path='B' exact element={<UsersB/>}/>
+          <Route path='A' excat element={<UsersA socket={socket}/>}/>
+          <Route path='B' exact element={<UsersB socket={socket}/>}/>
           <Route path='C' exact element={<UsersC/>}/>
           <Route path='B/management' exact element={<B_magement/>}/>
+          <Route path='B/settings' exact element={<B_settings/>}/>
+          <Route path='C/management' exact element={<C_magement/>}/>
+          <Route path='C/settings' exact element={<C_settings/>}/>
+          
+          
         </Routes>
       </main>
     </BrowserRouter>

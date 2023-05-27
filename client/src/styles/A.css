@@ -16,21 +16,17 @@
     margin-bottom: 40px;
     height: 300px;
     width: 55%;
-     
 }
 .badge-secondary2{
     background-color: #ffddd2 !important;
-    
 }
 
 .card-body{
     align-content: center !important;
-    
     border: 1px !important;
     border-radius: 12px !important;
 }
 .card{
-   
     background-color: #ffddd2 !important;
     border-width: 0px !important;
 }
@@ -39,7 +35,7 @@
 }
 .colB{
     padding: 0 !important;
-    
+    margin-left:10%;
 }
 .ult{
     background-color: #ffddd2 !important;
@@ -47,4 +43,11 @@
 .pad{
     padding: 2%;
     background-color: #ffddd2;
+}
+.contenedor-A{
+    margin-top: 3%;
+}
+.bell{
+    background: none;
+    border-style: hidden;
 }

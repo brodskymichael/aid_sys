@@ -8,36 +8,45 @@ import { Button, Row, Col, Badge} from 'react-bootstrap';
 import { useLocation } from "react-router-dom";
 import '../styles/A.css';
 import { useState, useEffect } from 'react';
-import { logoutUser, updateStates, updateStatesBreak, getUserA } from '../redux/actions';
-import { useDispatch } from 'react-redux';
+import { logoutUser, updateStates, updateStatesBreak, getUserA, getreceivedmsg, markSeen, getUsers } from '../redux/actions';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import Cookie from 'js-cookie';
-import Example from './ModalEmojis';
+import Example from './ModalBreak';
+import ModalEmojis from './ModalEmojis';
+import Messages from './modalMsg';
+import bell from '../assets/bell.svg';
 
 
-
-
-
-const UsersA = () => {
+const UsersA = ({socket}) => {
     const location = useLocation();
     const dispatch = useDispatch();
     const [counter, setCounter] = useState(0);
     const [breaks, setBreaks] = useState(0)
     const [hora, setHora] = useState('');
     const [fecha, setFecha] = useState('');
-    const [usuario, setUsuario] = useState({counter:0})
+    const [usuario, setUsuario] = useState({counter:0});
+    const [messages, setMessages] = useState({messages:''});
+    const users = useSelector((state) => state.users);
 
     const navigate = useNavigate();
     //console.log(usuario)
 
     const [show, setShow] = useState(false);
+    const [show2, setShow2] = useState(false);
+    const [show3, setShow3] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    const handleClose2 = () => setShow2(false);
+    const handleShow2 = () => {setShow2(true)};
+
+    const handleClose3 = () => setShow3(false);
+    const handleShow3 = () => {setShow3(true)};
+
     const getUsuarioA = async()=>{
         setUsuario(await dispatch(getUserA({name:location.state.userName})));
-
     }
   
    
@@ -56,6 +65,7 @@ const UsersA = () => {
             user:location.state,
             breaks: breaks
         }
+        handleShow();
         dispatch(updateStatesBreak(info));
     }
     const mostrarHora = () =>{
@@ -93,46 +103,95 @@ const UsersA = () => {
     }
 
     function temporizador() {
-        let identificadorTiempoDeEspera = setInterval(mostrarHora, 1000);
+        //let identificadorTiempoDeEspera = setInterval(mostrarHora, 1000);
+        let identificadorTiempoDeEspera2 = setInterval(getMessages, 1000);
+
     }
    
-    
+    const getMessages = async () =>{
+        if(usuario._id){
+            let mecha = await dispatch(getreceivedmsg({id:usuario._id}))
+            //console.log(mecha.payload.data)
+            setMessages(mecha.payload.data)
+            
+            
+        }
+    }
+    const getUnseenMessages = async ()=>{
+        if(messages && messages.length){
+            for (var i = 0; i < messages.length; i++) {
+                if (!messages[i].seen) {
+                //console.log(messages[i])
+                  handleShow2()
+                  break;
+                }
+            }
+            messages.map(async (e)=>{
+                if(!e.seen) await dispatch(markSeen({id_msg:e._id}))
+            })
+        }
+    }
     useEffect(() => {
         mostrarFecha();
         //temporizador()
-        handleShow();
+        //handleShow();
+        //getMessages()  
+        //dispatch(getreceivedmsg({id:usuario._id}))
        
     },[hora, fecha])
 
     useEffect(()=>{
-        
      getUsuarioA()
-        
+     dispatch(getUsers())
     },[])
+
+      
     useEffect(()=>{
         setCounter(usuario.counter)
         setBreaks(usuario.breaks)
+
+        if(usuario && usuario.questionPending){
+            console.log(usuario)
+            handleShow3()
+        } 
+        getMessages()
+        getUnseenMessages()
+        
     },[usuario])
-   
+
+    socket.on("sendMessage", function(msg){
+        //console.log("socket working on the frontend: ", msg);
+        getMessages()
+        getUnseenMessages()
+        
+    });
+
+    socket.on("changeMood", function(user){
+        //console.log("socket working on the frontend: ", msg);
+        if(usuario._id == user.user){
+            console.log(usuario)
+            handleShow3()
+        } 
+  
+    });
+
 
     return(
         <>
-            <div>
+            <div className='contenedor-A'>
             <Row>
-                <Col md={4}>
+                <Col md={3}>
                     <img src={titulo}></img>
                 </Col>
-                <Col md={4}>
+                <Col md={8}>
                     <h6>Hi {location.state.userName},</h6>
                     <img src={welcome}></img>
                     
+                    
                 </Col>
-                <Col md={4}> 
-                    <span className="badge badge-secondary">
-                        <h1 className="text-warning-medium">Next Event</h1>
-                    </span>
-                    <br/>
-                    <h6>Morning break at 10:00</h6>
+               
+                <Col md={1}>
+                    <button onClick={handleShow2} className='bell'><img src={bell} width='40px' height='40px'></img></button>
                 </Col>
 
             </Row>
@@ -189,7 +248,8 @@ const UsersA = () => {
             <h1></h1>
         </div>
         <Example show={show} handleClose={handleClose} usuario={usuario}/> 
-
+        <Messages show={show2} handleClose={handleClose2} messages={messages} users={users}/>
+        <ModalEmojis show={show3} handleClose={handleClose3} usuario={usuario._id} socket={socket} />
         </>
         
         

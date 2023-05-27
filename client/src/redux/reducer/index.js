@@ -6,7 +6,9 @@ const initialState = {
     users: [],
     userToken: null,
     refreshToken: null,
-    usersA:[]
+    usersA:[],
+    received_msg:[],
+    send_msg:[]
 
 }
 
@@ -53,6 +55,36 @@ function rootReducer(state = initialState, action){
             return{
                 ...state,
             }
+        case 'POST_MESSAGE':
+            return{
+                ...state
+            }
+        case 'GET_RECEIVED_MSG':
+            return{
+                ...state,
+                received_msg: action.payload
+            }
+        case 'GET_SEND_MSG':
+        return{
+            ...state,
+            send_msg: action.payload
+        }
+        case 'POST_SEEN':
+            return{
+                ...state
+            }
+        case 'POST_QUESTION':
+            return{
+                ...state
+            }
+        case 'POST_MOOD':
+            return{
+                ...state
+            }
+        case 'DELETE_USER':
+        return{
+            ...state
+        }
         default:
             return state;
     }

@@ -26,12 +26,18 @@ import logouticon from '../assets/logout.svg';
 import { logoutUser} from '../redux/actions';
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import goodMood from '../assets/goodMood.svg';
+import ok from '../assets/ok.svg';
+import down from '../assets/down.svg';
+import sad from '../assets/sad.svg';
+import bad from '../assets/bad.svg';
 
 
-const UsersB = () => {
+const UsersB = ({socket}) => {
     const [hora, setHora] = useState('');
     const [fecha, setFecha] = useState('');
     const [search, setSearch] = useState('');
+    const [selectedUserA, setSelectedUserA] = useState('');
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const allusers = useSelector((state) => state.users);
@@ -64,9 +70,13 @@ const UsersB = () => {
     }
 
     const [show, setShow] = useState(false);
+    
 
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const handleShow = (e) => {
+        setShow(true)
+        setSelectedUserA(e)
+    }
 
    
     const dt = useRef(null);
@@ -144,12 +154,40 @@ const UsersB = () => {
         let getusers= setInterval(dispatch(getUsers()), 1000);
     }
 
+    
     const actionBodyTemplate = (e) => {
+        //console.log(e)
         return <>
-            <button className="boton-send-media" onClick={handleShow}>Send Media</button>
-            <ModalUsersB show={show} handleClose={handleClose}/>
-                                    
+            <button className="boton-send-media" onClick={()=>handleShow(e)}>Send Media</button>
+                           
         </>;
+    };
+    const actionBodyTemplate2 = (e) => {
+        if(e.mood == '1'){
+            return <>
+            <img src={goodMood}/>            
+            </>
+        }
+        if(e.mood == '2'){
+            return <>
+            <img src={ok}/>            
+            </>
+        }
+        if(e.mood == '3'){
+            return <>
+            <img src={down}/>            
+            </>
+        }
+        if(e.mood == '4'){
+            return <>
+            <img src={sad}/>            
+            </>
+        }
+        if(e.mood == '5'){
+            return <>
+            <img src={bad}/>            
+            </>
+        }
     };
     const logout =() =>{
         try{
@@ -174,6 +212,12 @@ const UsersB = () => {
     },[fecha, hora,usersA])
 
 
+    socket.on("RTAchangeMood", function(mood){
+        console.log('llega')
+        dispatch(getUsers())
+        
+    });
+
     return(
         <>
         <div>
@@ -189,14 +233,15 @@ const UsersB = () => {
                 <Link to= '/B/management'>
                 <button className='boton-side-bar'><img src={management} width='25px' height='25px'/> Management</button>
                 </Link>
-                <button className='boton-side-bar'><img src={settings} width='25px' height='25px'/> Users</button>   
+                <Link to= '/B/settings'>
+                <button className='boton-side-bar'><img src={settings} width='25px' height='25px'/> Settings</button>
+                </Link>   
             </ul>
             <ul>
                 <Button className="btnA">
                     <h5>{hora}</h5>
                     <h6>{fecha}</h6>
                 </Button>
-                
                 
             </ul>
             <ul>
@@ -235,13 +280,14 @@ const UsersB = () => {
                         <Column field="name" header="Name" className='colum'></Column>
                         <Column field="breaks" header="Breaks"  className='colum'></Column>
                         <Column field="counter" header="Counter"  className='colum'></Column>
+                        <Column body={actionBodyTemplate2} header='Mood' exportable={false}  className='colum'></Column>
                         <Column body={actionBodyTemplate} exportable={false}  className='colum'></Column>
                     </DataTable>
                 </div>
             </Col>
             </Row>
         </div> 
-     
+        <ModalUsersB show={show} handleClose={handleClose} userB={usersB[0]} userA={selectedUserA} socket={socket}/>
         </>
     )
 }

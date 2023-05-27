@@ -75,6 +75,74 @@ export function updateStatesBreak(payload){
         })
     }
 }
+export function postMessage(payload){
+    console.log(payload)
+    return async function(dispatch){
+        const json = await axios.post('http://localhost:9000/postmessage', payload);
+        return dispatch({
+            type:'POST_MESSAGE',
+            payload:json
+        })
+    }
+}
 
 
 
+export function getreceivedmsg(payload){
+    return async function(dispatch){
+        const json = await axios ('http://localhost:9000/getreceivedmsg',{params:payload});
+        return dispatch({
+            type:'GET_RECEIVED_MSG',
+            payload:json
+        })
+    }
+}
+export function getsendmsg(payload){
+    return async function(dispatch){
+        const json = await axios('http://localhost:9000/getsendmsg', {params:payload});
+        return dispatch({
+            type:'GET_SEND_MSG',
+            payload:json
+        })
+    }
+}
+
+export function markSeen(payload){
+    return async function(dispatch){
+        const json = await axios.post('http://localhost:9000/markseen', payload)
+        return dispatch({
+            type:'POST_SEEN',
+            payload:json
+        })
+    }
+}
+
+export function sendQuestion(payload){
+    return async function(dispatch){
+        const json = await axios.post('http://localhost:9000/sendquestion', payload)
+        return dispatch({
+            type:'POST_QUESTION',
+            payload:json
+        })
+    }
+}
+
+export function changeMood(payload){
+    return async function(dispatch){
+        const json = await axios.post('http://localhost:9000/changemood', payload)
+        return dispatch({
+            type:'POST_MOOD',
+            payload:json
+        })
+    }
+}
+
+export function deleteUser(payload){
+    return async function(dispatch){
+        const json = await axios.post('http://localhost:9000/deleteUser', payload)
+        return dispatch({
+            type:'DELETE_USER',
+            payload:json
+        })
+    }
+}

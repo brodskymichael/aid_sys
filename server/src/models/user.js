@@ -23,12 +23,19 @@ const UserSchema = new Schema({
     },
     breaks:{ 
         type: Number,
+        default: 0
     },
     counter: {
         type: Number,
+        default:0
     },
     mood:{
-        type: Number
+        type: Number,
+        default: 1
+    },
+    questionPending:{
+        type:Boolean,
+        default: false
     }
     
 },

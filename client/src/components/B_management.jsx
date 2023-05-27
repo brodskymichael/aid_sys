@@ -25,7 +25,7 @@ import csv from '../assets/csv.svg';
 import { Link } from "react-router-dom";
 import { InputSwitch } from 'primereact/inputswitch';
 import logouticon from '../assets/logout.svg';
-import { logoutUser} from '../redux/actions';
+import { logoutUser, deleteUser} from '../redux/actions';
 
 import { useNavigate } from "react-router-dom";
 
@@ -96,10 +96,22 @@ const B_management = () => {
         let identificadorTiempoDeEspera = setInterval(mostrarHora, 1000);
         let getusers= setInterval(dispatch(getUsers()), 1000);
     }
+    const deleter = (e)=>{
+       let deleteduser= document.getElementById('formHorizontalRadios1').value
+       console.log(deleteduser)
+       dispatch(deleteUser({_id:deleteduser}))
+       dispatch(getUsers())
+        
+    }
 
     const actionBodyTemplate = (e) => {
         return <>
-            <FormCheck></FormCheck>
+            <Form.Check
+              type="radio"
+              name="formHorizontalRadios"
+              id="formHorizontalRadios1"
+              value={e._id}
+            />
         </>;
     };
     const logout =() =>{
@@ -124,7 +136,7 @@ const B_management = () => {
         //temporizador()
        
         
-    },[fecha, hora,usersA])
+    },[fecha, hora,usersA, allusers])
 
 
     return(
@@ -140,7 +152,9 @@ const B_management = () => {
                 <button className='boton-side-bar'><img src={brujula} width='25px' height='25px'/> Users</button>
                 </Link>
                 <button className='boton-selected'><img src={management} width='25px' height='25px'/> Management</button>
-                <button className='boton-side-bar'><img src={settings} width='25px' height='25px'/> Users</button>   
+                <Link to= '/B/settings'>
+                <button className='boton-side-bar'><img src={settings} width='25px' height='25px'/> Settings</button>
+                </Link>   
             </ul>
             <ul>
                 <Button className="btnA">
@@ -174,7 +188,7 @@ const B_management = () => {
                     </DataTable>
                     
                 </div>
-                <button className="boton-delete">
+                <button className="boton-delete" onClick={deleter}>
                     Delete selected user  
                 </button>
                

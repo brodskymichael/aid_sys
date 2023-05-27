@@ -3,3 +3,21 @@
     background-color: transparent;
     margin-right: 15px;
 }
+.pic-msg{
+    overflow-y: scroll;
+    height: 400px;
+}
+.pic{
+   align-self: center;
+}
+
+.msg{
+    border-top: solid;
+    border-width:1px;
+    border-color: #e14e10;
+    padding-top: 5%;
+    padding-bottom: 5%;
+}
+.text-emoji{
+    font-size: 15px;
+}
