@@ -1,5 +1,8 @@
 import axios from 'axios';
 import User from '../models/user.js'
+import endOfDay from 'date-fns';
+import startOfDay from 'date-fns';
+import History from '../models/history.js'
 
 
 export const getUsers = async (req, res)=>{
@@ -85,7 +88,7 @@ export const updateStatesBreak = async (req, res) =>{
 
     let userAfound = await User.updateOne(
         {name: user.userName},
-        { $set: {breaks:breaks+1}}
+        { $set: {breaks:breaks+1, on_break:true}}
     )
     if(userAfound){
         return userAfound
@@ -130,6 +133,17 @@ export const deleteUser = async (req, res)=>{
     
     try{
         return await User.findOneAndDelete({_id:_id})
+           
+    }catch(e){
+        
+        return e
+    }
+}
+export const getHistory = async (req, res)=>{
+    let {day} = req.query;
+    try{
+       return await History.find({day:day})
+       
            
     }catch(e){
         

@@ -12,6 +12,9 @@ import cookies from 'cookie-parser';
 import { Server } from "socket.io";
 import { postMessage } from './controllers/message.js';
 import { sendQuestion, changeMood } from './controllers/user.js';
+import * as cron from 'node-cron';
+import { reset, calculoDistress } from './controllers/cron.js';
+import Settings from './models/settings.js';
 
 const app = express();
 
@@ -64,6 +67,10 @@ socketIO.on('connection', (socket) => {
     socketIO.sockets.emit("RTAchangeMood", mood);
    
   });
+
+  socket.on("newLog",()=>{
+    setTimeout(()=>{socketIO.sockets.emit("RTAlog");}, 1000);
+  })
   
 
 });
@@ -78,4 +85,24 @@ server.listen(9000, ()=>{
 
 dbConn();
 app.use('/',router);
+
+cron.schedule("0 46 20 * * * ", function () {
+  console.log("------ reset ---------");
+  reset();
+},{
+  timezone: "America/Buenos_Aires"
+});
+let settings = await Settings.findOne()
+let sc = settings.sampling_cycle;
+
+cron.schedule("0 */"+sc+" 7-20 * * * ", function () {
+  console.log("------ calculando distress ---------");
+  calculoDistress();
+  setTimeout(()=>{socketIO.sockets.emit("checkDistress");}, 1000);
+  
+},{
+  timezone: "America/Buenos_Aires"
+});
+
+
 

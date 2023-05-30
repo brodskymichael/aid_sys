@@ -31,6 +31,7 @@ import ok from '../assets/ok.svg';
 import down from '../assets/down.svg';
 import sad from '../assets/sad.svg';
 import bad from '../assets/bad.svg';
+import red_arrow from '../assets/red_arrow.svg';
 
 
 const UsersB = ({socket}) => {
@@ -162,6 +163,30 @@ const UsersB = ({socket}) => {
                            
         </>;
     };
+    const actionBodyTemplate3 = (e) => {
+        if(e.login_today == '0'){
+            return <>
+            <p style={{color: 'grey'}}>{e.name}</p>            
+            </>
+        }
+        if(e.on_break){
+            return <>
+            <p style={{color: 'red'}}>{e.name}</p>            
+            </>
+        }
+        if(e.login_today == '1'){
+            return <>
+            <p style={{color:'green'}}>{e.name}</p>            
+            </>
+        }
+        if(e.login_today == '2'){
+            return <>
+            <p style={{color: 'grey'}}><span style={{color: 'red'}}>!</span>{e.name}</p>            
+            </>
+        }
+        
+    };
+   
     const actionBodyTemplate2 = (e) => {
         if(e.mood == '1'){
             return <>
@@ -189,9 +214,19 @@ const UsersB = ({socket}) => {
             </>
         }
     };
+    const distressTemplate = (e) => {
+        if(e.distress){
+            return <img src={red_arrow} height="20px"></img>
+        }else{
+            return <>
+            -          
+            </>
+        }
+    };
     const logout =() =>{
         try{
-            dispatch(logoutUser());
+            dispatch(logoutUser(usersB[0]));
+            socket.emit("newLog")
             Cookie.remove('_auth');
             Cookie.remove('_auth_storage');
             Cookie.remove('_auth_state');
@@ -217,6 +252,13 @@ const UsersB = ({socket}) => {
         dispatch(getUsers())
         
     });
+
+    socket.on("RTAlog", function(){
+        dispatch(getUsers())
+    })
+    socket.on("checkDistress", function(){
+        dispatch(getUsers())
+    })
 
     return(
         <>
@@ -263,7 +305,7 @@ const UsersB = ({socket}) => {
                 <div>
                     <Row>
                         <Col> <h6>Users</h6></Col>
-                        <Col><button className="btn"><img src={addUser} width='25px' height='25px'/>  Add User</button></Col>
+                        <Col><a href='/' target='_blank' className="btn"><img src={addUser} width='25px' height='25px'/>  Add User</a></Col>
                     </Row>
                 </div>
                 <br/>
@@ -277,10 +319,11 @@ const UsersB = ({socket}) => {
                         <button type="button" className='button-export' severity="warning" rounded onClick={exportPdf} data-pr-tooltip="PDF" ><img src={pdf} width='25px' height='30px'/></button>
                     </div>
                     <DataTable ref={dt} value={usersA?usersA:allusersA} tableStyle={{ minWidth: '100%'}} className="table">
-                        <Column field="name" header="Name" className='colum'></Column>
+                        <Column  body={actionBodyTemplate3} header="Name" className='colum'></Column>
                         <Column field="breaks" header="Breaks"  className='colum'></Column>
                         <Column field="counter" header="Counter"  className='colum'></Column>
                         <Column body={actionBodyTemplate2} header='Mood' exportable={false}  className='colum'></Column>
+                        <Column body={distressTemplate} header='Distress' className='colum'></Column>
                         <Column body={actionBodyTemplate} exportable={false}  className='colum'></Column>
                     </DataTable>
                 </div>

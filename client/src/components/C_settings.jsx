@@ -15,7 +15,7 @@ import '../styles/B_management.css';
 import Form from 'react-bootstrap/Form';
 import logoutGris from '../assets/logoutGris.svg';
 import Cookie from 'js-cookie';
-import ModalUsersB from './modalUsersB';
+
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Tooltip } from 'primereact/tooltip';
@@ -30,7 +30,7 @@ import { useNavigate } from "react-router-dom";
 
 
 
-const C_settings = () => {
+const C_settings = ({socket}) => {
     const [hora, setHora] = useState('');
     const [fecha, setFecha] = useState('');
     const [search, setSearch] = useState('');
@@ -40,7 +40,7 @@ const C_settings = () => {
     
     let allusersA=[]
     
-    let usersB = []
+    let usersC = []
     allusers.map((e)=>{
         if(e.userType==="A"){
             allusersA.push(e)
@@ -49,7 +49,7 @@ const C_settings = () => {
  
     allusers.map((e)=>{
         if(e.userType==="C"){
-           usersB.push(e)
+           usersC.push(e)
         }
     })
 
@@ -96,7 +96,8 @@ const C_settings = () => {
     };
     const logout =() =>{
         try{
-            dispatch(logoutUser());
+            dispatch(logoutUser(usersC[0]));
+            socket.emit("newLog")
             Cookie.remove('_auth');
             Cookie.remove('_auth_storage');
             Cookie.remove('_auth_state');
@@ -146,7 +147,7 @@ const C_settings = () => {
             </Col>
             <Col md={9} className='cuerpo-m'>
                 <div>
-                    <h2  className='saludo'>Hello {usersB.map((e)=>{return(e.name)})}!</h2>
+                    <h2  className='saludo'>Hello {usersC.map((e)=>{return(e.name)})}!</h2>
                     <h6>So exited and happy to have you back!</h6>
                 </div>
                 <br/>

@@ -36,6 +36,22 @@ const UserSchema = new Schema({
     questionPending:{
         type:Boolean,
         default: false
+    },
+    login_today:{
+        type: Number,
+        default: 0
+    },
+    previous_counter:{
+        type: Number,
+        default:0
+    },
+    distress:{
+        type: Boolean,
+        default: false
+    },
+    on_break:{
+        type:Boolean,
+        default: false
     }
     
 },

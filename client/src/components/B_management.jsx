@@ -32,7 +32,7 @@ import { useNavigate } from "react-router-dom";
 
 
 
-const B_management = () => {
+const B_management = ({socket}) => {
     const [hora, setHora] = useState('');
     const [fecha, setFecha] = useState('');
     const [search, setSearch] = useState('');
@@ -114,9 +114,34 @@ const B_management = () => {
             />
         </>;
     };
+    const actionBodyTemplate3 = (e) => {
+        if(e.login_today == '0'){
+            return <>
+            <p style={{color: 'grey'}}>{e.name}</p>            
+            </>
+        }
+        if(e.on_break){
+            return <>
+            <p style={{color: 'red'}}>{e.name}</p>            
+            </>
+        }
+        if(e.login_today == '1'){
+            return <>
+            <p style={{color:'green'}}>{e.name}</p>            
+            </>
+        }
+        if(e.login_today == '2'){
+            return <>
+            <p style={{color: 'grey'}}><span style={{color: 'red'}}>!</span>{e.name}</p>            
+            </>
+        }
+        
+    };
     const logout =() =>{
+        //console.log(usersB[0])
         try{
-            dispatch(logoutUser());
+            dispatch(logoutUser(usersB[0]));
+            socket.emit("newLog")
             Cookie.remove('_auth');
             Cookie.remove('_auth_storage');
             Cookie.remove('_auth_state');
@@ -138,6 +163,9 @@ const B_management = () => {
         
     },[fecha, hora,usersA, allusers])
 
+    socket.on("RTAlog", function(){
+        dispatch(getUsers())
+    })
 
     return(
         <>
@@ -183,7 +211,7 @@ const B_management = () => {
                     <input onChange={(e)=>Search(e)} placeholder='Search...' className='search-bar'></input>
                     <DataTable ref={dt} value={usersA?usersA:allusersA} tableStyle={{ minWidth: '100%'}} className="table">
                     <Column body={actionBodyTemplate} exportable={false}  className='colum'></Column>
-                        <Column field="user" header="User" className='colum'></Column>
+                        <Column body={actionBodyTemplate3}  header="User" className='colum'></Column>
                         <Column field="workGroup" header="User Group"  className='colum'></Column>
                     </DataTable>
                     

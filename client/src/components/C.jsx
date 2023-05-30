@@ -1,6 +1,6 @@
 import { Button, Row, Col } from 'react-bootstrap';
 import { useState, useEffect, useRef } from 'react';
-import { getUsers } from "../redux/actions/index";
+import { getHistory, getUserA, getUsers } from "../redux/actions/index";
 import { useDispatch, useSelector } from 'react-redux';
 import titulo from '../assets/titulo.svg';
 import brujula from '../assets/brujula.svg';
@@ -20,22 +20,24 @@ import ok from '../assets/ok.svg';
 import down from '../assets/down.svg';
 import sad from '../assets/sad.svg';
 import bad from '../assets/bad.svg';
+import red_arrow from '../assets/red_arrow.svg';
 
 
 
 
-
-const UsersC = () => {
+const UsersC = ({socket}) => {
     const [hora, setHora] = useState('');
     const [fecha, setFecha] = useState('');
     const [search, setSearch] = useState('');
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const allusers = useSelector((state) => state.users);
+    const [showTableToday, setShowTableToday] = useState(true);
+    const [history, setHistories] = useState([]);
     
     let allusersA=[]
     
-    let usersB = []
+    let usersC = []
     allusers.map((e)=>{
         if(e.userType==="A"){
             allusersA.push(e)
@@ -44,7 +46,7 @@ const UsersC = () => {
  
     allusers.map((e)=>{
         if(e.userType==="C"){
-           usersB.push(e)
+           usersC.push(e)
         }
     })
  
@@ -93,7 +95,8 @@ const UsersC = () => {
     
     const logout =() =>{
         try{
-            dispatch(logoutUser());
+            dispatch(logoutUser(usersC[0]));
+            socket.emit("newLog")
             Cookie.remove('_auth');
             Cookie.remove('_auth_storage');
             Cookie.remove('_auth_state');
@@ -132,8 +135,40 @@ const UsersC = () => {
         }
        
     };
-    
 
+    const actionBodyTemplate3 = (e) => {
+        if(e.login_today == '0'){
+            return <>
+            <p style={{color: 'grey'}}>{e.name}</p>            
+            </>
+        }
+        if(e.on_break){
+            return <>
+            <p style={{color: 'red'}}>{e.name}</p>            
+            </>
+        }
+        if(e.login_today == '1'){
+            return <>
+            <p style={{color:'green'}}>{e.name}</p>            
+            </>
+        }
+        if(e.login_today == '2'){
+            return <>
+            <p style={{color: 'grey'}}><span style={{color: 'red'}}>!</span>{e.name}</p>            
+            </>
+        }
+        
+    };
+    
+    const distressTemplate = (e) => {
+        if(e.distress){
+            return <img src={red_arrow} height="20px"></img>
+        }else{
+            return <>
+            -          
+            </>
+        }
+    };
     
     useEffect(() => {
         dispatch(getUsers())
@@ -142,6 +177,36 @@ const UsersC = () => {
        
         
     },[fecha, hora,usersA])
+
+    socket.on("RTAlog", function(){
+        dispatch(getUsers())
+    })
+    socket.on("checkDistress", function(){
+        dispatch(getUsers())
+    })
+
+    const today = new Date();
+    const date = today.setDate(today.getDate()); 
+    const defaultValue = new Date(date).toISOString().split('T')[0] // yyyy-mm-dd
+
+    const changeDate = async(e)=>{
+        console.log(e)
+        if(e!=defaultValue){
+            let histories = await dispatch(getHistory({day:e}))
+            /*histories.map(async (h)=>{
+                let id = h.user
+                console.log(id)
+                let userA = await dispatch(getUserA(id))
+                h.user='hola'
+            })
+            */
+            setHistories(histories)
+            setShowTableToday(false)
+            console.log(histories)
+        }else{
+            setShowTableToday(true)
+        }
+    }
 
 
     return(
@@ -168,6 +233,7 @@ const UsersC = () => {
                     <h5>{hora}</h5>
                     <h6>{fecha}</h6>
                 </Button>
+                <input type="date" style={{margin:'50px 0px'}} defaultValue={defaultValue} max={defaultValue} onChange={(e)=>changeDate(e.target.value)}></input>
             </ul>
             <ul>
                 <Button className="btnA " onClick={logout}>
@@ -177,19 +243,27 @@ const UsersC = () => {
             </Col>
             <Col md={9} className='cuerpo-m'>
                 <div>
-                    <h2  className='saludo'>Hello {usersB.map((e)=>{return(e.name)})}!</h2>
+                    <h2  className='saludo'>Hello {usersC.map((e)=>{return(e.name)})}!</h2>
                     <h6>So exited and happy to have you back!</h6>
                 </div>
                 <br/>
                 <div className='contenedor-tabla'>
                     <input onChange={(e)=>Search(e)} placeholder='Search...' className='search-bar'></input>
-                    <DataTable ref={dt} value={usersA?usersA:allusersA} tableStyle={{ minWidth: '100%'}} className="table">
-                        <Column field="user" header="User" className='colum'></Column>
-                        <Column field="breaks" header="Breaks"  className='colum'></Column>
-                        <Column field="counter" header="Counter"  className='colum'></Column>
-                        <Column body={actionBodyTemplate} exportable={false}   header="Mood" className='colum'></Column>
-                    </DataTable>
-                    
+                    {showTableToday?
+                        <DataTable ref={dt} value={usersA?usersA:allusersA} tableStyle={{ minWidth: '100%'}} className="table">
+                            <Column body={actionBodyTemplate3} header="User" className='colum'></Column>
+                            <Column field="breaks" header="Breaks"  className='colum'></Column>
+                            <Column field="counter" header="Counter"  className='colum'></Column>
+                            <Column body={distressTemplate} header="Distress"  className='colum'></Column>
+                            <Column body={actionBodyTemplate} exportable={false}   header="Mood" className='colum'></Column>
+                        </DataTable>
+                        :
+                        <DataTable ref={dt} value={history?history:[]} tableStyle={{ minWidth: '100%'}} className="table">
+                            <Column field="username" header="User" className='colum'></Column>
+                            <Column field="breaks" header="Breaks"  className='colum'></Column>
+                            <Column field="counter" header="Counter"  className='colum'></Column>
+                        </DataTable>
+                    }
                 </div>
             </Col>
          

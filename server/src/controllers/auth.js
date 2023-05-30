@@ -3,9 +3,10 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import asyncHandler from 'express-async-handler';
 import cookieParser from "cookie-parser"
+import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+dotenv.config()
 
-
-
+//console.log(process.env)
 const ACCESS_TOKEN_SECRET="14163637a637dbb5066b90949d2c87eb65081a2203c60e9a29f56c921aa3579eda7825111bc2fadffacb5d2b1bd5e0e235926f2709db2dba480a7b012623d062"
 const REFRESH_TOKEN_SECRET= "561f08e59feff7080e5629fc78ff7c490b15fe8ada4ce33bfe064c4fbbf28c3af2a887a41c19e61b29927df5c5051bf96451b25c6bf9050786f4d77dc2cf7519"
 
@@ -18,6 +19,7 @@ const login = asyncHandler(async (req, res)=>{
     }
 
     const foundUser = await User.findOne({ user:user })
+
     //console.log(foundUser)
 
     if (!foundUser) {
@@ -41,11 +43,13 @@ const login = asyncHandler(async (req, res)=>{
         },
         
         ACCESS_TOKEN_SECRET
+        
         //{ expiresIn: '15m' }
     )
 
     const refreshToken = jwt.sign(
         { "user": foundUser.user },
+
         REFRESH_TOKEN_SECRET,
         { expiresIn: '7d' }
     )
@@ -57,6 +61,9 @@ const login = asyncHandler(async (req, res)=>{
         sameSite: 'None', //cross-site cookie 
         maxAge: 7 * 24 * 60 * 60 * 1000 //cookie expiry: set to match rT
     })
+
+    foundUser.login_today=1;
+    foundUser.save()
 
     // Send accessToken containing username and roles 
     res.json({ message:'Welcome Back!',token:accessToken, refreshToken: refreshToken, user:foundUser })
@@ -95,7 +102,8 @@ const login = asyncHandler(async (req, res)=>{
     )
 }*/
 
-const logout =(req, res)=>{
+const logout = async (req, res)=>{
+    const {_id} = req.body;
     const cookies = req.cookies
     //console.log(cookies)
     if (!cookies) return res.sendStatus(204) //No content
@@ -106,6 +114,11 @@ const logout =(req, res)=>{
         expires: new Date(Date.now() + 5 * 1000),
         httpOnly: true,
     })
+   
+    await User.updateOne(
+        {_id: _id},
+        { $set: {login_today:2}}
+    )
     res
         .status(200)
         .json({ success: true, message: 'User logged out successfully' })

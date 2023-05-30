@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 
 
 
-const Login = () => {
+const Login = ({socket}) => {
     const { setAuth } = useContext(AuthContext)
     const userRef = useRef();
     const errRef = useRef();
@@ -62,8 +62,8 @@ const Login = () => {
         
         try{
             let i = await dispatch(loginUser(form))
-            console.log(i.payload.data)
-            
+            //console.log(i.payload.data)
+            socket.emit("newLog")
             signIn(
                 {
                     token: i.payload.data.token,
@@ -102,7 +102,7 @@ const Login = () => {
      
         try{
             let i = await dispatch(loginUser(form))
-            console.log(i)
+            socket.emit("newLog")
             signIn(
                 {
                     token: i.payload.data.token,

@@ -15,7 +15,6 @@ import '../styles/B_management.css';
 import Form from 'react-bootstrap/Form';
 import logoutGris from '../assets/logoutGris.svg';
 import Cookie from 'js-cookie';
-import ModalUsersB from './modalUsersB';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Tooltip } from 'primereact/tooltip';
@@ -32,7 +31,7 @@ import { useNavigate } from "react-router-dom";
 
 
 
-const C_management = () => {
+const C_management = ({socket}) => {
     const [hora, setHora] = useState('');
     const [fecha, setFecha] = useState('');
     const [search, setSearch] = useState('');
@@ -42,7 +41,7 @@ const C_management = () => {
     
     let allusersA=[]
     
-    let usersB = []
+    let usersC = []
     allusers.map((e)=>{
         if(e.userType==="A"){
             allusersA.push(e)
@@ -51,7 +50,7 @@ const C_management = () => {
  
     allusers.map((e)=>{
         if(e.userType==="C"){
-           usersB.push(e)
+           usersC.push(e)
         }
     })
  
@@ -114,9 +113,33 @@ const C_management = () => {
             />
         </>;
     };
+    const actionBodyTemplate3 = (e) => {
+        if(e.login_today == '0'){
+            return <>
+            <p style={{color: 'grey'}}>{e.name}</p>            
+            </>
+        }
+        if(e.on_break){
+            return <>
+            <p style={{color: 'red'}}>{e.name}</p>            
+            </>
+        }
+        if(e.login_today == '1'){
+            return <>
+            <p style={{color:'green'}}>{e.name}</p>            
+            </>
+        }
+        if(e.login_today == '2'){
+            return <>
+            <p style={{color: 'grey'}}><span style={{color: 'red'}}>!</span>{e.name}</p>            
+            </>
+        }
+        
+    };
     const logout =() =>{
         try{
-            dispatch(logoutUser());
+            dispatch(logoutUser(usersC[0]));
+            socket.emit("newLog")
             Cookie.remove('_auth');
             Cookie.remove('_auth_storage');
             Cookie.remove('_auth_state');
@@ -138,6 +161,9 @@ const C_management = () => {
         
     },[fecha, hora,usersA])
 
+    socket.on("RTAlog", function(){
+        dispatch(getUsers())
+    })
 
     return(
         <>
@@ -175,7 +201,7 @@ const C_management = () => {
 
             <Col md={9} className='cuerpo-m'>
                 <div>
-                    <h2  className='saludo'>Hello {usersB.map((e)=>{return(e.name)})}!</h2>
+                    <h2  className='saludo'>Hello {usersC.map((e)=>{return(e.name)})}!</h2>
                     <h6>So exited and happy to have you back!</h6>
                 </div>
                 <br/>
@@ -183,7 +209,7 @@ const C_management = () => {
                     <input onChange={(e)=>Search(e)} placeholder='Search...' className='search-bar'></input>
                     <DataTable ref={dt} value={usersA?usersA:allusersA} tableStyle={{ minWidth: '100%'}} className="table">
                     <Column body={actionBodyTemplate} exportable={false}  className='colum'></Column>
-                        <Column field="user" header="User" className='colum'></Column>
+                        <Column body={actionBodyTemplate3} header="User" className='colum'></Column>
                         <Column field="workGroup" header="User Group"  className='colum'></Column>
                     </DataTable>
                     

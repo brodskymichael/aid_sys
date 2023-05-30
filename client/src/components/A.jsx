@@ -80,17 +80,18 @@ const UsersA = ({socket}) => {
         const tiempoTranscurrido = Date.now();
         const hoy = new Date(tiempoTranscurrido);
         let fecha = hoy.toDateString()
-        if(fecha.includes('20:0')){
-            setBreaks(0);
-            setCounter(0);
-        }
+        /*if(fecha.includes('20:0')){
+            
+        }*/
         setFecha(fecha);
 
     }
 
     const logout =() =>{
+        //console.log(usuario)
         try{
-            dispatch(logoutUser());
+            dispatch(logoutUser(usuario));
+            socket.emit("newLog")
             Cookie.remove('_auth');
             Cookie.remove('_auth_storage');
             Cookie.remove('_auth_state');

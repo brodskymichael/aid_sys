@@ -25,14 +25,14 @@ function App() {
       
         <Routes>
           <Route path="/" exact element={ <Register/> } />
-          <Route path="/login" exact element={ <Login/> } />
+          <Route path="/login" exact element={ <Login socket={socket}/> } />
           <Route path='A' excat element={<UsersA socket={socket}/>}/>
           <Route path='B' exact element={<UsersB socket={socket}/>}/>
-          <Route path='C' exact element={<UsersC/>}/>
-          <Route path='B/management' exact element={<B_magement/>}/>
-          <Route path='B/settings' exact element={<B_settings/>}/>
-          <Route path='C/management' exact element={<C_magement/>}/>
-          <Route path='C/settings' exact element={<C_settings/>}/>
+          <Route path='C' exact element={<UsersC socket={socket}/>}/>
+          <Route path='B/management' exact element={<B_magement socket={socket}/>}/>
+          <Route path='B/settings' exact element={<B_settings socket={socket}/>}/>
+          <Route path='C/management' exact element={<C_magement socket={socket}/>}/>
+          <Route path='C/settings' exact element={<C_settings socket={socket}/>}/>
           
           
         </Routes>

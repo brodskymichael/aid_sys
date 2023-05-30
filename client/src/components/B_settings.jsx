@@ -30,7 +30,7 @@ import { useNavigate } from "react-router-dom";
 
 
 
-const B_settings = () => {
+const B_settings = ({socket}) => {
     const [hora, setHora] = useState('');
     const [fecha, setFecha] = useState('');
     const [search, setSearch] = useState('');
@@ -96,7 +96,8 @@ const B_settings = () => {
     };
     const logout =() =>{
         try{
-            dispatch(logoutUser());
+            dispatch(logoutUser(usersB[0]));
+            socket.emit("newLog")
             Cookie.remove('_auth');
             Cookie.remove('_auth_storage');
             Cookie.remove('_auth_state');

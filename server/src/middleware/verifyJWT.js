@@ -1,7 +1,9 @@
 import jwt from 'jsonwebtoken';
-import "dotenv/config";
+//import "dotenv/config";
+import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+dotenv.config()
 
-const ACCESS_TOKEN_SECRET = "14163637a637dbb5066b90949d2c87eb65081a2203c60e9a29f56c921aa3579eda7825111bc2fadffacb5d2b1bd5e0e235926f2709db2dba480a7b012623d062"
+//const ACCESS_TOKEN_SECRET = "14163637a637dbb5066b90949d2c87eb65081a2203c60e9a29f56c921aa3579eda7825111bc2fadffacb5d2b1bd5e0e235926f2709db2dba480a7b012623d062"
 const verifyJWT = (req, res, next) => {
     //const authHeader = req.headers.authorization || req.headers.Authorization
        

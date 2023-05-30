@@ -85,6 +85,10 @@ function rootReducer(state = initialState, action){
         return{
             ...state
         }
+        case 'GET_HISTORY':
+        return{
+            ...state
+        }
         default:
             return state;
     }

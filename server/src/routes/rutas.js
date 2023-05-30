@@ -1,5 +1,5 @@
 import express from "express";
-import { getUserA, getUsers, postUser, updateStates, updateStatesBreak,sendQuestion, changeMood, deleteUser} from "../controllers/user.js";
+import { getUserA, getUsers, postUser, updateStates, updateStatesBreak,sendQuestion, changeMood, deleteUser, getHistory} from "../controllers/user.js";
 import { loginLimiter } from "../middleware/loginLimiter.js";
 import user from '../models/user.js'
 import {login, logout} from '../controllers/auth.js';
@@ -122,6 +122,14 @@ router.post('/deleteUser', async (req, res)=>{
     res.status(404).send("something happend", e)
   }
 })
+router.get('/history', async (req, res)=>{
 
+  try{
+    let histories = await getHistory(req);
+    return res.json(histories)
+  }catch(e){
+    res.status(404).send("something happen !", e)
+  }
+})
 
 export default router;

@@ -45,9 +45,9 @@ export function loginUser(payload){
     }
 }
 
-export function logoutUser(){
+export function logoutUser(payload){
     return async function(dispatch){
-        const json =await axios.post('http://localhost:9000/logout');
+        const json =await axios.post('http://localhost:9000/logout', payload);
         localStorage.removeItem('_auth')
 
         axios.defaults.headers.common['Authorization'] = `Bearer ${json.data['token']}`
@@ -144,5 +144,16 @@ export function deleteUser(payload){
             type:'DELETE_USER',
             payload:json
         })
+    }
+}
+
+export function getHistory(payload){
+    //console.log(payload)
+   
+    return async function(dispatch){
+        var json = await axios.get('http://localhost:9000/history', {params:payload});
+        //console.log(json);
+        return json.data
+        
     }
 }
