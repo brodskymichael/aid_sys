@@ -222,15 +222,10 @@ const Login = ({socket}) => {
                             <button className="btn ">Login</button>
                         </Form.Group>
                         </form>
-
-
-                                <h6>Don't have an account?<Link to={'/'} style={{color: '#e14e10'}}> Sign up!</Link></h6>
-
-                        
-                       
+                <h6>Don't have an account?<Link to={'/'} style={{color: '#e14e10'}}> Sign up!</Link></h6>
                 </Container>
                     </Col>
-                    <Col  md={7} >
+                    <Col  md={7} className="cont-img" >
                         <div >
                         <img src={titulo} alt="" className="img-titulo" />
                         <img src={foto} alt="" className="imgm"/>

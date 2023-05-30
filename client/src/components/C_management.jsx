@@ -134,6 +134,11 @@ const C_management = ({socket}) => {
             <p style={{color: 'grey'}}><span style={{color: 'red'}}>!</span>{e.name}</p>            
             </>
         }
+        if(e.on_break){
+            return <>
+            <p style={{color: 'red'}}><span style={{color: 'red'}}>!</span>{e.name}</p>            
+            </>
+        }
         
     };
     const logout =() =>{

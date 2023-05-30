@@ -304,10 +304,10 @@ const Register = () => {
                         <h6>You already have an account?<Link to={'/login'} style={{color: '#e14e10'}}> Log in!</Link></h6>
                         </Container>
                         </Col>
-                        <Col  md={7} >
-                        <div className="fotos">
+                        <Col  md={7}  className="cont-img" >
+                        <div>
                            
-                            <img src={titulo} alt="" className="imgm" />
+                            <img src={titulo} alt="" className="img-titulo" />
                             <img src={foto} alt="" className="imgm"/>
                            
                         </div>

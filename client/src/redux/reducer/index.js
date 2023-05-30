@@ -89,6 +89,14 @@ function rootReducer(state = initialState, action){
         return{
             ...state
         }
+        case 'UPDATE_SETTINGS':
+        return{
+            ...state
+        }
+        case 'UPDATE_BREAK_FALSE':
+        return{
+            ...state
+        }
         default:
             return state;
     }

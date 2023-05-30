@@ -8,7 +8,7 @@ import { Button, Row, Col, Badge} from 'react-bootstrap';
 import { useLocation } from "react-router-dom";
 import '../styles/A.css';
 import { useState, useEffect } from 'react';
-import { logoutUser, updateStates, updateStatesBreak, getUserA, getreceivedmsg, markSeen, getUsers } from '../redux/actions';
+import { logoutUser, updateStates, updateStatesBreak, getUserA, getreceivedmsg, markSeen, getUsers, updateBreakFalse } from '../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import Cookie from 'js-cookie';
@@ -16,6 +16,7 @@ import Example from './ModalBreak';
 import ModalEmojis from './ModalEmojis';
 import Messages from './modalMsg';
 import bell from '../assets/bell.svg';
+
 
 
 const UsersA = ({socket}) => {
@@ -36,7 +37,10 @@ const UsersA = ({socket}) => {
     const [show2, setShow2] = useState(false);
     const [show3, setShow3] = useState(false);
 
-    const handleClose = () => setShow(false);
+    const handleClose = async () =>{
+        await dispatch(updateBreakFalse({user:location.state}))
+        setShow(false);  
+    } 
     const handleShow = () => setShow(true);
 
     const handleClose2 = () => setShow2(false);

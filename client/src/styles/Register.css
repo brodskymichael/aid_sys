@@ -25,23 +25,20 @@ h1.text-warning-medium{
   max-width:50vw ;
 
 }
+.cont-img{
+  align-items: center !important;
+  max-width: 100%;
+  align-self: center;
+}
 .img-titulo{
-  
-  align-self: center !important;
+ margin-left: 20%;
 }
 .btn{
   color: white !important;
   background-color:#e14e10 !important;
   width:200px;
-  
+}
 
-}
-.fotos{
-  align-items: center !important;
-  max-width: 100%;
-  align-self: center;
-  
-}
 .log{
   align-self: center;
 }

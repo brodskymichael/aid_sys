@@ -99,6 +99,23 @@
 .saludo{
     color: #e14e10;
 }
-input[type='checkbox']{
-    margin-top:1rem;
+.sett{
+   padding: 10px;
+}
+.sett-inp{
+    border-radius: 12px;
+    border-color: #e14e10;
+    width: 6%;
+    border-style: solid;
+    padding: 3px;
+}
+.update-botton{
+    background-color: #e14e10;
+    position: relative;
+    width: 200px;
+    border-radius: 12px;
+    color: white;
+    border-style: hidden;
+    font-size: large;
+    margin-top: 4%;
 }

@@ -1,6 +1,6 @@
 import { Table, Button, Row, Col, Badge, FormCheck} from 'react-bootstrap';
 import { useState, useEffect, useRef } from 'react';
-import { getUsers } from "../redux/actions/index";
+import { getUsers, updateSettings } from "../redux/actions/index";
 import { useDispatch, useSelector } from 'react-redux';
 import welcome from '../assets/welcomeBack.svg';
 import addUser from '../assets/addUser.svg';
@@ -26,6 +26,7 @@ import { Link } from "react-router-dom";
 import logouticon from '../assets/logout.svg';
 import { logoutUser} from '../redux/actions';
 import { useNavigate } from "react-router-dom";
+
 
 
 
@@ -107,12 +108,34 @@ const B_settings = ({socket}) => {
             console.log(e)
         }
     }
+
+    const [errors, setErrors] = useState('')
+    const SubmitSettings = async() =>{
+        //console.log('llego')
+        let sampling_cycle =  document.getElementById('sampling_cycle').value;
+        let count_ref_number =  document.getElementById('count_ref_number').value;
+        console.log(count_ref_number)
+        console.log(sampling_cycle)
+        let settings = {
+            sampling_cycle:sampling_cycle,
+            count_ref_number:count_ref_number
+        }
+        if(sampling_cycle != '' && count_ref_number != ''){
+            await dispatch(updateSettings(settings))
+            setErrors('')
+            return alert('Settings Updated')   
+        }else{
+            setErrors('both fields are required')
+        }
+        
+
+    }
     
     useEffect(() => {
         dispatch(getUsers())
         mostrarFecha()
         //temporizador()
-    },[fecha, hora,usersA])
+    },[fecha, hora,usersA, errors])
 
 
     return(
@@ -152,15 +175,19 @@ const B_settings = ({socket}) => {
                 </div>
                 <br/>
                 <div className='contenedor-tabla'>
-                <Form.Group as={Row} className="mb-3" controlId="formHorizontalCheck">
-              
-                    <Form.Check label="New users registration available" />
-                   
+                <Form.Group className='sett'>
+                    <h6>Sampling Cycle:</h6>
+                    <input id='sampling_cycle' type="number" min='1' className='sett-inp'></input>
+                    <h6>User Count Reference:</h6>
+                    <input id='count_ref_number' type="number" min='1' className='sett-inp'></input>
                 </Form.Group>
                 </div>
-                <button className="boton-delete">
-                    Delete selected user  
+                <button className="update-botton"  onClick={SubmitSettings}>
+                    Update Settings  
                 </button>
+                {errors!=''?
+                    <p>{errors}</p>:<></>
+                }
                
             </Col>
          

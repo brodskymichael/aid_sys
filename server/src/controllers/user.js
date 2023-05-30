@@ -97,7 +97,21 @@ export const updateStatesBreak = async (req, res) =>{
     } 
  
 }
+export const updateBreakFalse = async (req, res) =>{
+    
+    let { user} = req.body;
 
+    let userAfound = await User.updateOne(
+        {name: user.userName},
+        { $set: {on_break:false}}
+    )
+    if(userAfound){
+        return userAfound
+    }else{
+        return 'NO FUNCIONA'
+    } 
+ 
+}
 export const sendQuestion = async (req, res) =>{
     
     let { user } = req.body;

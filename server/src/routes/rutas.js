@@ -1,9 +1,10 @@
 import express from "express";
-import { getUserA, getUsers, postUser, updateStates, updateStatesBreak,sendQuestion, changeMood, deleteUser, getHistory} from "../controllers/user.js";
+import { getUserA, getUsers, postUser, updateStates, updateStatesBreak,sendQuestion, changeMood, deleteUser, getHistory, updateBreakFalse} from "../controllers/user.js";
 import { loginLimiter } from "../middleware/loginLimiter.js";
 import user from '../models/user.js'
 import {login, logout} from '../controllers/auth.js';
 import { markSeen, postMessage, receivedMessages, sendMessages } from "../controllers/message.js";
+import { updateSettings } from "../controllers/settings.js";
 
 //import { verifyJWT } from "../middleware/verifyJWT.js";
 
@@ -58,6 +59,15 @@ router.post('/updateStates', async (req, res)=>{
 router.post('/updateStatesBreak', async (req, res)=>{
   try{
     await updateStatesBreak(req)
+    res.status(200).send("ok")
+  }catch(e){
+    console.log(e);
+  }
+  
+})
+router.post('/updateBreakFalse', async (req, res)=>{
+  try{
+    await updateBreakFalse(req)
     res.status(200).send("ok")
   }catch(e){
     console.log(e);
@@ -129,6 +139,14 @@ router.get('/history', async (req, res)=>{
     return res.json(histories)
   }catch(e){
     res.status(404).send("something happen !", e)
+  }
+})
+router.post('/updatesettings', async (req, res)=>{
+  try{
+    let actual_settings = await updateSettings(req);
+    return res.json(actual_settings)
+  }catch(e){
+    res.status(404).send("cannot update settings", e)
   }
 })
 

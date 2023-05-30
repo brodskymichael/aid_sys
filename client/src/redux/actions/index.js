@@ -75,6 +75,15 @@ export function updateStatesBreak(payload){
         })
     }
 }
+export function updateBreakFalse(payload){
+    return async function(dispatch){
+        const json = await axios.post('http://localhost:9000/updateBreakFalse', payload);
+        return dispatch({
+            type:'UPDATE_BREAK_FALSE',
+            payload:json
+        })
+    }
+}
 export function postMessage(payload){
     console.log(payload)
     return async function(dispatch){
@@ -155,5 +164,14 @@ export function getHistory(payload){
         //console.log(json);
         return json.data
         
+    }
+}
+export function updateSettings(payload){
+    return async function(dispatch){
+        const json = await axios.post('http://localhost:9000/updatesettings', payload)
+        return dispatch({
+            type:'UPDATE_SETTINGS',
+            payload:json
+        })
     }
 }

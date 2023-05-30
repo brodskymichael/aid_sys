@@ -184,6 +184,11 @@ const UsersB = ({socket}) => {
             <p style={{color: 'grey'}}><span style={{color: 'red'}}>!</span>{e.name}</p>            
             </>
         }
+        if(e.on_break){
+            return <>
+            <p style={{color: 'red'}}><span style={{color: 'red'}}>!</span>{e.name}</p>            
+            </>
+        }
         
     };
    
@@ -248,7 +253,7 @@ const UsersB = ({socket}) => {
 
 
     socket.on("RTAchangeMood", function(mood){
-        console.log('llega')
+        //console.log('llega')
         dispatch(getUsers())
         
     });
@@ -302,13 +307,7 @@ const UsersB = ({socket}) => {
                     
                 </div>
                 <br/>
-                <div>
-                    <Row>
-                        <Col> <h6>Users</h6></Col>
-                        <Col><a href='/' target='_blank' className="btn"><img src={addUser} width='25px' height='25px'/>  Add User</a></Col>
-                    </Row>
-                </div>
-                <br/>
+               
                
                 <div className='contenedor-tabla'>
                     <input onChange={(e)=>Search(e)} placeholder='Search...' className='search-barr'></input>
