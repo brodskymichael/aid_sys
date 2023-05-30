@@ -39,6 +39,7 @@ const UsersA = ({socket}) => {
 
     const handleClose = async () =>{
         await dispatch(updateBreakFalse({user:location.state}))
+        socket.emit("newLog")
         setShow(false);  
     } 
     const handleShow = () => setShow(true);
@@ -71,6 +72,7 @@ const UsersA = ({socket}) => {
         }
         handleShow();
         dispatch(updateStatesBreak(info));
+        socket.emit("newLog")
     }
     const mostrarHora = () =>{
         const now = new Date();
