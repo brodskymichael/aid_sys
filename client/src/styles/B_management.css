@@ -119,3 +119,9 @@
     font-size: large;
     margin-top: 4%;
 }
+.calendar{
+    border-radius: 12px;
+    padding: 5px;
+    border-color: #e14e10;
+    border-style: solid;
+}

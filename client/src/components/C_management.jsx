@@ -41,7 +41,7 @@ const C_management = ({socket}) => {
     
     let allusersA=[]
     
-    let usersC = []
+    let userC = {}
     allusers.map((e)=>{
         if(e.userType==="A"){
             allusersA.push(e)
@@ -50,7 +50,7 @@ const C_management = ({socket}) => {
  
     allusers.map((e)=>{
         if(e.userType==="C"){
-           usersC.push(e)
+           userC = e
         }
     })
  
@@ -143,7 +143,7 @@ const C_management = ({socket}) => {
     };
     const logout =() =>{
         try{
-            dispatch(logoutUser(usersC[0]));
+            dispatch(logoutUser(userC));
             socket.emit("newLog")
             Cookie.remove('_auth');
             Cookie.remove('_auth_storage');
@@ -172,62 +172,72 @@ const C_management = ({socket}) => {
 
     return(
         <>
-        <div>
-            <Row>
-            <Col md={3} className='cuerpo-left'>
-
-            <img src={titulo}></img>
-            <ul>
-                <br/>
-                <Link to= '/C'>
-                <button className='boton-side-bar'><img src={brujula} width='25px' height='25px'/> Users</button>
+        
+            {userC.login_today!=1?(
+                <div className='cont-btn-log'>
+                <Link to= '/login'>
+                <button className="btnLo">Go Login!</button>
                 </Link>
-                <button className='boton-selected'><img src={management} width='25px' height='25px'/> Management</button>
-                <Link to= '/C/settings'>
-                <button className='boton-side-bar'><img src={settings} width='25px' height='25px'/> Settings</button>   
-                </Link>
-            </ul>
-            <ul>
-                <Button className="btnA">
-                    <h5>{hora}</h5>
-                    <h6>{fecha}</h6>
-                </Button>
-                
-                
-            </ul>
-            <ul>
-                <Button className="btnA " onClick={logout}>
-                    <img src={logouticon}/> Logout  
-                </Button>
-            </ul>
-            </Col>
-
-         
-
-            <Col md={9} className='cuerpo-m'>
+                </div>
+            ):(
+                <>
                 <div>
-                    <h2  className='saludo'>Hello {usersC.map((e)=>{return(e.name)})}!</h2>
-                    <h6>So exited and happy to have you back!</h6>
-                </div>
-                <br/>
-                <div className='contenedor-tabla'>
-                    <input onChange={(e)=>Search(e)} placeholder='Search...' className='search-bar'></input>
-                    <DataTable ref={dt} value={usersA?usersA:allusersA} tableStyle={{ minWidth: '100%'}} className="table">
-                    <Column body={actionBodyTemplate} exportable={false}  className='colum'></Column>
-                        <Column body={actionBodyTemplate3} header="User" className='colum'></Column>
-                        <Column field="workGroup" header="User Group"  className='colum'></Column>
-                    </DataTable>
+                    <Row>
+                    <Col md={3} className='cuerpo-left'>
+
+                    <img src={titulo}></img>
+                    <ul>
+                        <br/>
+                        <Link to= '/C'>
+                        <button className='boton-side-bar'><img src={brujula} width='25px' height='25px'/> Users</button>
+                        </Link>
+                        <button className='boton-selected'><img src={management} width='25px' height='25px'/> Management</button>
+                        <Link to= '/C/settings'>
+                        <button className='boton-side-bar'><img src={settings} width='25px' height='25px'/> Settings</button>   
+                        </Link>
+                    </ul>
+                    <ul>
+                        <Button className="btnA">
+                            <h5>{hora}</h5>
+                            <h6>{fecha}</h6>
+                        </Button>
+                        
+                        
+                    </ul>
+                    <ul>
+                        <Button className="btnA " onClick={logout}>
+                            <img src={logouticon}/> Logout  
+                        </Button>
+                    </ul>
+                    </Col>
+
+                
+
+                    <Col md={9} className='cuerpo-m'>
+                        <div>
+                            <h2  className='saludo'>Hello {userC.name}!</h2>
+                            <h6>So exited and happy to have you back!</h6>
+                        </div>
+                        <br/>
+                        <div className='contenedor-tabla'>
+                            <input onChange={(e)=>Search(e)} placeholder='Search...' className='search-bar'></input>
+                            <DataTable ref={dt} value={usersA?usersA:allusersA} tableStyle={{ minWidth: '100%'}} className="table">
+                            <Column body={actionBodyTemplate} exportable={false}  className='colum'></Column>
+                                <Column body={actionBodyTemplate3} header="User" className='colum'></Column>
+                                <Column field="workGroup" header="User Group"  className='colum'></Column>
+                            </DataTable>
+                            
+                        </div>
+                        <button className="boton-delete" onClick={deleter}>
+                            Delete selected user  
+                        </button>
                     
-                </div>
-                <button className="boton-delete" onClick={deleter}>
-                    Delete selected user  
-                </button>
-               
-            </Col>
-         
-            </Row>
-        </div> 
-     
+                    </Col>
+                
+                    </Row>
+                </div> 
+                </>
+            )}
         </>
     )
 }

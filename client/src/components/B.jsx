@@ -45,7 +45,7 @@ const UsersB = ({socket}) => {
     
     let allusersA=[]
     
-    let usersB = []
+    let userB = {}
     allusers.map((e)=>{
         if(e.userType==="A"){
             allusersA.push(e)
@@ -54,7 +54,7 @@ const UsersB = ({socket}) => {
  
     allusers.map((e)=>{
         if(e.userType==="B"){
-           usersB.push(e)
+           userB=e
         }
     })
  
@@ -230,7 +230,7 @@ const UsersB = ({socket}) => {
     };
     const logout =() =>{
         try{
-            dispatch(logoutUser(usersB[0]));
+            dispatch(logoutUser(userB));
             socket.emit("newLog")
             Cookie.remove('_auth');
             Cookie.remove('_auth_storage');
@@ -249,11 +249,11 @@ const UsersB = ({socket}) => {
         //temporizador()
        
         
-    },[fecha, hora,usersA])
+    },[])
 
 
     socket.on("RTAchangeMood", function(mood){
-        //console.log('llega')
+        //console.log('llega')s
         dispatch(getUsers())
         
     });
@@ -264,72 +264,85 @@ const UsersB = ({socket}) => {
     socket.on("checkDistress", function(){
         dispatch(getUsers())
     })
+    
+    
 
     return(
         <>
-        <div>
-            <Row>
-            <Col md={3} className='cuerpo-left'>
-
-            <img src={titulo}></img>
-            <ul>
-                <br/>
-                <Link to= '/B'>
-                <button className='boton-selected'><img src={brujula} width='25px' height='25px'/> Users</button>
+            
+            {userB.login_today!=1?(
+                <div className='cont-btn-log'>
+                <Link to= '/login'>
+                <button className="btnLo">Go Login!</button>
                 </Link>
-                <Link to= '/B/management'>
-                <button className='boton-side-bar'><img src={management} width='25px' height='25px'/> Management</button>
-                </Link>
-                <Link to= '/B/settings'>
-                <button className='boton-side-bar'><img src={settings} width='25px' height='25px'/> Settings</button>
-                </Link>   
-            </ul>
-            <ul>
-                <Button className="btnA">
-                    <h5>{hora}</h5>
-                    <h6>{fecha}</h6>
-                </Button>
-                
-            </ul>
-            <ul>
-            <Button className="btnA " onClick={logout}>
-                <img src={logouticon}/> Logout  
-            </Button>
-            </ul>
-            </Col>
-
-         
-
-            <Col md={9} className='cuerpo'>
+                </div>
+            ):(
+                <>
                 <div>
-                    <h6>Hi {usersB.map((e)=>{return(e.name)})},</h6>
-                    <img src={welcome}></img>
+                    <Row>
+                    <Col md={3} className='cuerpo-left'>
+
+                    <img src={titulo}></img>
+                    <ul>
+                        <br/>
+                        <Link to= '/B'>
+                        <button className='boton-selected'><img src={brujula} width='25px' height='25px'/> Users</button>
+                        </Link>
+                        <Link to= '/B/management'>
+                        <button className='boton-side-bar'><img src={management} width='25px' height='25px'/> Management</button>
+                        </Link>
+                        <Link to= '/B/settings'>
+                        <button className='boton-side-bar'><img src={settings} width='25px' height='25px'/> Settings</button>
+                        </Link>   
+                    </ul>
+                    <ul>
+                        <Button className="btnA">
+                            <h5>{hora}</h5>
+                            <h6>{fecha}</h6>
+                        </Button>
+                        
+                    </ul>
+                    <ul>
+                    <Button className="btnA " onClick={logout}>
+                        <img src={logouticon}/> Logout  
+                    </Button>
+                    </ul>
+                    </Col>
+
+                
+
+                    <Col md={9} className='cuerpo'>
+                        <div>
+                            <h6>Hi {userB.name},</h6>
+                            <img src={welcome}></img>
+                            
+                        </div>
+                        <br/>
                     
-                </div>
-                <br/>
-               
-               
-                <div className='contenedor-tabla'>
-                    <input onChange={(e)=>Search(e)} placeholder='Search...' className='search-barr'></input>
-                    <Tooltip target=".export-buttons>button" position="bottom" />
-                    <div className='contenedor-filters'>
-                        <button type="button" className='button-export' rounded onClick={() => exportCSV(false)} data-pr-tooltip="CSV" ><img src={csv} width='30px' height='35px'/></button>
-                        <button type="button" className='button-export' severity="success" rounded onClick={exportExcel} data-pr-tooltip="XLS" ><img src={excel} width='25px' height='30px'/></button>
-                        <button type="button" className='button-export' severity="warning" rounded onClick={exportPdf} data-pr-tooltip="PDF" ><img src={pdf} width='25px' height='30px'/></button>
-                    </div>
-                    <DataTable ref={dt} value={usersA?usersA:allusersA} tableStyle={{ minWidth: '100%'}} className="table">
-                        <Column  body={actionBodyTemplate3} header="Name" className='colum'></Column>
-                        <Column field="breaks" header="Breaks"  className='colum'></Column>
-                        <Column field="counter" header="Counter"  className='colum'></Column>
-                        <Column body={actionBodyTemplate2} header='Mood' exportable={false}  className='colum'></Column>
-                        <Column body={distressTemplate} header='Distress' className='colum'></Column>
-                        <Column body={actionBodyTemplate} exportable={false}  className='colum'></Column>
-                    </DataTable>
-                </div>
-            </Col>
-            </Row>
-        </div> 
-        <ModalUsersB show={show} handleClose={handleClose} userB={usersB[0]} userA={selectedUserA} socket={socket}/>
+                    
+                        <div className='contenedor-tabla'>
+                            <input onChange={(e)=>Search(e)} placeholder='Search...' className='search-barr'></input>
+                            <Tooltip target=".export-buttons>button" position="bottom" />
+                            <div className='contenedor-filters'>
+                                <button type="button" className='button-export' rounded onClick={() => exportCSV(false)} data-pr-tooltip="CSV" ><img src={csv} width='30px' height='35px'/></button>
+                                <button type="button" className='button-export' severity="success" rounded onClick={exportExcel} data-pr-tooltip="XLS" ><img src={excel} width='25px' height='30px'/></button>
+                                <button type="button" className='button-export' severity="warning" rounded onClick={exportPdf} data-pr-tooltip="PDF" ><img src={pdf} width='25px' height='30px'/></button>
+                            </div>
+                            <DataTable ref={dt} value={usersA?usersA:allusersA} tableStyle={{ minWidth: '100%'}} className="table">
+                                <Column  body={actionBodyTemplate3} header="Name" className='colum'></Column>
+                                <Column field="breaks" header="Breaks"  className='colum'></Column>
+                                <Column field="counter" header="Counter"  className='colum'></Column>
+                                <Column body={actionBodyTemplate2} header='Mood' exportable={false}  className='colum'></Column>
+                                <Column body={distressTemplate} header='Distress' className='colum'></Column>
+                                <Column body={actionBodyTemplate} exportable={false}  className='colum'></Column>
+                            </DataTable>
+                        </div>
+                    </Col>
+                    </Row>
+                </div> 
+                <ModalUsersB show={show} handleClose={handleClose} userB={userB} userA={selectedUserA} socket={socket}/>
+                </>
+            )}
         </>
     )
 }

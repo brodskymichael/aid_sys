@@ -40,7 +40,7 @@ const C_settings = ({socket}) => {
     
     let allusersA=[]
     
-    let usersC = []
+    let userC = {}
     allusers.map((e)=>{
         if(e.userType==="A"){
             allusersA.push(e)
@@ -49,7 +49,8 @@ const C_settings = ({socket}) => {
  
     allusers.map((e)=>{
         if(e.userType==="C"){
-           usersC.push(e)
+           
+           userC = e
         }
     })
 
@@ -96,7 +97,7 @@ const C_settings = ({socket}) => {
     };
     const logout =() =>{
         try{
-            dispatch(logoutUser(usersC[0]));
+            dispatch(logoutUser(userC));
             socket.emit("newLog")
             Cookie.remove('_auth');
             Cookie.remove('_auth_storage');
@@ -138,60 +139,69 @@ const C_settings = ({socket}) => {
 
     return(
         <>
-        <div>
-            <Row>
-            <Col md={3} className='cuerpo-left'>
-            <img src={titulo}></img>
-            <ul>
-                <br/>
-                <Link to= '/C'>
-                <button className='boton-side-bar'><img src={brujula} width='25px' height='25px'/> Users</button>
+            {userC.login_today!=1?(
+                <div className='cont-btn-log'>
+                <Link to= '/login'>
+                <button className="btnLo">Go Login!</button>
                 </Link>
-                <Link to= '/C/management'>
-                <button className='boton-side-bar'><img src={management} width='25px' height='25px'/> Management</button>
-                </Link>
-                <Link to= '/C/settings'>
-                <button className='boton-selected'><img src={settings} width='25px' height='25px'/>Settings</button>   
-                </Link>
-            </ul>
-            <ul>
-                <Button className="btnA">
-                    <h5>{hora}</h5>
-                    <h6>{fecha}</h6>
-                </Button>  
-            </ul>
-            <ul>
-                <Button className="btnA " onClick={logout}>
-                    <img src={logouticon}/> Logout  
-                </Button>
-            </ul>
-            </Col>
-            <Col md={9} className='cuerpo-m'>
+                </div>
+            ):(
+                <>
                 <div>
-                    <h2  className='saludo'>Hello {usersC.map((e)=>{return(e.name)})}!</h2>
-                    <h6>So exited and happy to have you back!</h6>
-                </div>
-                <br/>
-                <div className='contenedor-tabla'>
-                <Form.Group className='sett'>
-                    <h6>Sampling Cycle:</h6>
-                    <input id='sampling_cycle' type="number" min='1' className='sett-inp'></input>
-                    <h6>User Count Reference:</h6>
-                    <input id='count_ref_number' type="number" min='1' className='sett-inp'></input>
-                </Form.Group>
-                </div>
-                <button className="update-botton"  onClick={SubmitSettings}>
-                    Update Settings  
-                </button>
-                {errors!=''?
-                    <p>{errors}</p>:<></>
-                }
-               
-            </Col>
-         
-            </Row>
-        </div> 
-     
+                    <Row>
+                    <Col md={3} className='cuerpo-left'>
+                    <img src={titulo}></img>
+                    <ul>
+                        <br/>
+                        <Link to= '/C'>
+                        <button className='boton-side-bar'><img src={brujula} width='25px' height='25px'/> Users</button>
+                        </Link>
+                        <Link to= '/C/management'>
+                        <button className='boton-side-bar'><img src={management} width='25px' height='25px'/> Management</button>
+                        </Link>
+                        <Link to= '/C/settings'>
+                        <button className='boton-selected'><img src={settings} width='25px' height='25px'/>Settings</button>   
+                        </Link>
+                    </ul>
+                    <ul>
+                        <Button className="btnA">
+                            <h5>{hora}</h5>
+                            <h6>{fecha}</h6>
+                        </Button>  
+                    </ul>
+                    <ul>
+                        <Button className="btnA " onClick={logout}>
+                            <img src={logouticon}/> Logout  
+                        </Button>
+                    </ul>
+                    </Col>
+                    <Col md={9} className='cuerpo-m'>
+                        <div>
+                            <h2  className='saludo'>Hello {userC.name}!</h2>
+                            <h6>So exited and happy to have you back!</h6>
+                        </div>
+                        <br/>
+                        <div className='contenedor-tabla'>
+                        <Form.Group className='sett'>
+                            <h6>Sampling Cycle:</h6>
+                            <input id='sampling_cycle' type="number" min='1' className='sett-inp'></input>
+                            <h6>User Count Reference:</h6>
+                            <input id='count_ref_number' type="number" min='1' className='sett-inp'></input>
+                        </Form.Group>
+                        </div>
+                        <button className="update-botton"  onClick={SubmitSettings}>
+                            Update Settings  
+                        </button>
+                        {errors!=''?
+                            <p>{errors}</p>:<></>
+                        }
+                    
+                    </Col>
+                
+                    </Row>
+                </div> 
+                </>
+            )}
         </>
     )
 }

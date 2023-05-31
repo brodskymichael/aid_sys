@@ -37,7 +37,7 @@ const UsersC = ({socket}) => {
     
     let allusersA=[]
     
-    let usersC = []
+    let userC = {}
     allusers.map((e)=>{
         if(e.userType==="A"){
             allusersA.push(e)
@@ -46,7 +46,7 @@ const UsersC = ({socket}) => {
  
     allusers.map((e)=>{
         if(e.userType==="C"){
-           usersC.push(e)
+           userC=e
         }
     })
  
@@ -95,7 +95,7 @@ const UsersC = ({socket}) => {
     
     const logout =() =>{
         try{
-            dispatch(logoutUser(usersC[0]));
+            dispatch(logoutUser(userC));
             socket.emit("newLog")
             Cookie.remove('_auth');
             Cookie.remove('_auth_storage');
@@ -216,65 +216,74 @@ const UsersC = ({socket}) => {
 
     return(
         <>
-        <div>
-            <Row>
-            <Col md={3} className='cuerpo-left'>
-
-            <img src={titulo}></img>
-            <ul>
-                <br/>
-                <Link to= '/C'>
-                <button className='boton-selected'><img src={brujula} width='25px' height='25px'/> Users</button>
+            {userC.login_today!=1?(
+                <div className='cont-btn-log'>
+                <Link to= '/login'>
+                <button className="btnLo">Go Login!</button>
                 </Link>
-                <Link to= '/C/management'>
-                <button className='boton-side-bar'><img src={management} width='25px' height='25px'/> Management</button>
-                </Link>
-                <Link to= '/C/settings'>
-                <button className='boton-side-bar'><img src={settings} width='25px' height='25px'/> Settings</button>
-                </Link>   
-            </ul>
-            <ul>
-                <Button className="btnA">
-                    <h5>{hora}</h5>
-                    <h6>{fecha}</h6>
-                </Button>
-                <input type="date" style={{margin:'50px 0px'}} defaultValue={defaultValue} max={defaultValue} onChange={(e)=>changeDate(e.target.value)}></input>
-            </ul>
-            <ul>
-                <Button className="btnA " onClick={logout}>
-                    <img src={logouticon}/> Logout  
-                </Button>
-            </ul>
-            </Col>
-            <Col md={9} className='cuerpo-m'>
+                </div>
+            ):(
+                <>
                 <div>
-                    <h2  className='saludo'>Hello {usersC.map((e)=>{return(e.name)})}!</h2>
-                    <h6>So exited and happy to have you back!</h6>
-                </div>
-                <br/>
-                <div className='contenedor-tabla'>
-                    <input onChange={(e)=>Search(e)} placeholder='Search...' className='search-bar'></input>
-                    {showTableToday?
-                        <DataTable ref={dt} value={usersA?usersA:allusersA} tableStyle={{ minWidth: '100%'}} className="table">
-                            <Column body={actionBodyTemplate3} header="User" className='colum'></Column>
-                            <Column field="breaks" header="Breaks"  className='colum'></Column>
-                            <Column field="counter" header="Counter"  className='colum'></Column>
-                            <Column body={distressTemplate} header="Distress"  className='colum'></Column>
-                            <Column body={actionBodyTemplate} exportable={false}   header="Mood" className='colum'></Column>
-                        </DataTable>
-                        :
-                        <DataTable ref={dt} value={history?history:[]} tableStyle={{ minWidth: '100%'}} className="table">
-                            <Column field="username" header="User" className='colum'></Column>
-                            <Column field="breaks" header="Breaks"  className='colum'></Column>
-                            <Column field="counter" header="Counter"  className='colum'></Column>
-                        </DataTable>
-                    }
-                </div>
-            </Col>
-         
-            </Row>
-        </div> 
-     
+                    <Row>
+                    <Col md={3} className='cuerpo-left'>
+
+                    <img src={titulo}></img>
+                    <ul>
+                        <br/>
+                        <Link to= '/C'>
+                        <button className='boton-selected'><img src={brujula} width='25px' height='25px'/> Users</button>
+                        </Link>
+                        <Link to= '/C/management'>
+                        <button className='boton-side-bar'><img src={management} width='25px' height='25px'/> Management</button>
+                        </Link>
+                        <Link to= '/C/settings'>
+                        <button className='boton-side-bar'><img src={settings} width='25px' height='25px'/> Settings</button>
+                        </Link>   
+                    </ul>
+                    <ul>
+                        <Button className="btnA">
+                            <h5>{hora}</h5>
+                            <h6>{fecha}</h6>
+                        </Button>
+                        <input type="date" style={{margin:'50px 0px'}} defaultValue={defaultValue} max={defaultValue} onChange={(e)=>changeDate(e.target.value)} className='calendar'></input>
+                    </ul>
+                    <ul>
+                        <Button className="btnA " onClick={logout}>
+                            <img src={logouticon}/> Logout  
+                        </Button>
+                    </ul>
+                    </Col>
+                    <Col md={9} className='cuerpo-m'>
+                        <div>
+                            <h2  className='saludo'>Hello {userC.name}!</h2>
+                            <h6>So exited and happy to have you back!</h6>
+                        </div>
+                        <br/>
+                        <div className='contenedor-tabla'>
+                            <input onChange={(e)=>Search(e)} placeholder='Search...' className='search-bar'></input>
+                            {showTableToday?
+                                <DataTable ref={dt} value={usersA?usersA:allusersA} tableStyle={{ minWidth: '100%'}} className="table">
+                                    <Column body={actionBodyTemplate3} header="User" className='colum'></Column>
+                                    <Column field="breaks" header="Breaks"  className='colum'></Column>
+                                    <Column field="counter" header="Counter"  className='colum'></Column>
+                                    <Column body={distressTemplate} header="Distress"  className='colum'></Column>
+                                    <Column body={actionBodyTemplate} exportable={false}   header="Mood" className='colum'></Column>
+                                </DataTable>
+                                :
+                                <DataTable ref={dt} value={history?history:[]} tableStyle={{ minWidth: '100%'}} className="table">
+                                    <Column field="username" header="User" className='colum'></Column>
+                                    <Column field="breaks" header="Breaks"  className='colum'></Column>
+                                    <Column field="counter" header="Counter"  className='colum'></Column>
+                                </DataTable>
+                            }
+                        </div>
+                    </Col>
+                
+                    </Row>
+                </div> 
+                </>
+            )}
         </>
     )
 }

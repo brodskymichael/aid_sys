@@ -84,8 +84,9 @@ const Login = ({socket}) => {
             //setUser('');
             setPwd('');
             setSuccess(true);
+            setErrMsg('')
         }catch(err){
-            setErrMsg(err)
+            setErrMsg('Incorrect Password or Username')
         }
        
             
@@ -184,6 +185,8 @@ const Login = ({socket}) => {
                         </Form.Group>
                         
                     </form>
+                    {errMsg? 
+                    <h6>{errMsg}</h6>:<></>}
                     <form onSubmit={handleSubmitA}>
                     <Form.Group>
                         <br/>

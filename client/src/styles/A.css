@@ -5,6 +5,21 @@
 .btnA{
     border: 0px !important;
 }
+.btnLo{
+   background-color: #e14e10;
+   color: white;
+   border-style: hidden;
+   border-radius: 12px;
+   justify-self: center;
+   text-align: center;
+}
+.cont-btn-log{
+    /* centrar vertical y horizontalmente */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -25px 0 0 -25px;
+}
 
 .blacktext{
     color: black;

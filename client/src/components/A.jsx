@@ -5,7 +5,7 @@ import finger from '../assets/finger.svg';
 import titulo from '../assets/titulo.svg';
 import logouticon from '../assets/logout.svg';
 import { Button, Row, Col, Badge} from 'react-bootstrap';
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import '../styles/A.css';
 import { useState, useEffect } from 'react';
 import { logoutUser, updateStates, updateStatesBreak, getUserA, getreceivedmsg, markSeen, getUsers, updateBreakFalse } from '../redux/actions';
@@ -29,6 +29,7 @@ const UsersA = ({socket}) => {
     const [usuario, setUsuario] = useState({counter:0});
     const [messages, setMessages] = useState({messages:''});
     const users = useSelector((state) => state.users);
+    const [cookies, setCookies] = useState('');
 
     const navigate = useNavigate();
     //console.log(usuario)
@@ -38,12 +39,13 @@ const UsersA = ({socket}) => {
     const [show3, setShow3] = useState(false);
 
     const handleClose = async () =>{
-        await dispatch(updateBreakFalse({user:location.state}))
+        setShow(false);
+        dispatch(updateBreakFalse({user:location.state}))
         socket.emit("newLog")
-        setShow(false);  
+          
     } 
     const handleShow = () => setShow(true);
-
+ 
     const handleClose2 = () => setShow2(false);
     const handleShow2 = () => {setShow2(true)};
 
@@ -63,8 +65,10 @@ const UsersA = ({socket}) => {
             counter: counter
         }
         dispatch(updateStates(info));
+        socket.emit("newLog")
     }
     const clickBreak = () => {
+       
         setBreaks(breaks+1)
         let info = {
             user:location.state,
@@ -72,6 +76,8 @@ const UsersA = ({socket}) => {
         }
         handleShow();
         dispatch(updateStatesBreak(info));
+        
+        //handleClose()
         socket.emit("newLog")
     }
     const mostrarHora = () =>{
@@ -86,17 +92,15 @@ const UsersA = ({socket}) => {
         const tiempoTranscurrido = Date.now();
         const hoy = new Date(tiempoTranscurrido);
         let fecha = hoy.toDateString()
-        /*if(fecha.includes('20:0')){
-            
-        }*/
+
         setFecha(fecha);
 
     }
 
-    const logout =() =>{
+    const logout =async () =>{
         //console.log(usuario)
         try{
-            dispatch(logoutUser(usuario));
+            await dispatch(logoutUser({_id:usuario._id}));
             socket.emit("newLog")
             Cookie.remove('_auth');
             Cookie.remove('_auth_storage');
@@ -148,8 +152,9 @@ const UsersA = ({socket}) => {
     },[hora, fecha])
 
     useEffect(()=>{
-     getUsuarioA()
-     dispatch(getUsers())
+        getUsuarioA()
+        dispatch(getUsers())
+        
     },[])
 
       
@@ -163,6 +168,7 @@ const UsersA = ({socket}) => {
         } 
         getMessages()
         getUnseenMessages()
+     
         
     },[usuario])
 
@@ -184,7 +190,16 @@ const UsersA = ({socket}) => {
 
 
     return(
+        
         <>
+            {usuario.login_today!=1 && usuario.userType!='A'?(
+                <div className='cont-btn-log'>
+                <Link to= '/login'>
+                <button className="btnLo">Go Login!</button>
+                </Link>
+                </div>
+            ):(
+            <>
             <div className='contenedor-A'>
             <Row>
                 <Col md={3}>
@@ -257,6 +272,7 @@ const UsersA = ({socket}) => {
         <Example show={show} handleClose={handleClose} usuario={usuario}/> 
         <Messages show={show2} handleClose={handleClose2} messages={messages} users={users}/>
         <ModalEmojis show={show3} handleClose={handleClose3} usuario={usuario._id} socket={socket} />
+        </>)}
         </>
         
         
