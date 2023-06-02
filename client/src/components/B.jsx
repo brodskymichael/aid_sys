@@ -144,7 +144,7 @@ const UsersB = ({socket}) => {
         let minutes= now.getMinutes();
         let str = ora+':'+minutes
         setHora(str)
-        console.log(hora)
+        //console.log(hora)
     }
     const mostrarFecha = () =>{
         const tiempoTranscurrido = Date.now();

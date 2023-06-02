@@ -64,7 +64,7 @@ const ModalEmojis = ({show, handleClose, handleShow,usuario, socket}) => {
   
           </Modal.Body>
           <Modal.Footer>
-          <button onClick={sendMood}>OK</button>
+          <button onClick={sendMood} className='ok-btn'>OK</button>
           </Modal.Footer>
         </Modal>
       </>

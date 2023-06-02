@@ -21,4 +21,10 @@
 .text-emoji{
     font-size: 15px;
 }
+.ok-btn{
+    border-radius: 12px;
+    border-style: hidden;
+    background-color: #e14e10;
+    color: white;
+}
 
