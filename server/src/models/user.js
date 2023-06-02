@@ -31,7 +31,7 @@ const UserSchema = new Schema({
     },
     mood:{
         type: Number,
-        default: 1
+        default: 0
     },
     questionPending:{
         type:Boolean,
@@ -52,7 +52,20 @@ const UserSchema = new Schema({
     on_break:{
         type:Boolean,
         default: false
+    },
+    reference_time:{
+        type: Date,
+        default: Date.now()
+    },
+    work_time:{
+        type: Number,
+        default:0
+    },
+    break_time:{
+        type: Number,
+        default:0
     }
+
     
 },
     {

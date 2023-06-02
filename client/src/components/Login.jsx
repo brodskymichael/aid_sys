@@ -57,7 +57,8 @@ const Login = ({socket}) => {
         //console.log(user,pwd);
         let form = {
             user: user,
-            pwd: pwd
+            pwd: pwd,
+            type: 'B/C'
         }
         
         try{
@@ -74,6 +75,7 @@ const Login = ({socket}) => {
                     //refreshTokenExpireIn: res.data.refreshTokenExpireIn     // Only if you are using refreshToken feature
                 }
             )
+            localStorage.setItem('user', JSON.stringify(i.payload.data.user))
             
            if(i.payload.data.user.userType==='A') navigate('/A');
            if(i.payload.data.user.userType==='B') navigate('/B');
@@ -98,7 +100,8 @@ const Login = ({socket}) => {
         e.preventDefault();
         let form = {
             user: user,
-            pwd: 'staticpwd'
+            pwd: 'staticpwd',
+            type: 'A'
         }
      
         try{
@@ -225,7 +228,7 @@ const Login = ({socket}) => {
                             <button className="btn ">Login</button>
                         </Form.Group>
                         </form>
-                <h6>Don't have an account?<Link to={'/'} style={{color: '#e14e10'}}> Sign up!</Link></h6>
+                <h6>Don't have an account?<Link to={'/register'} style={{color: '#e14e10'}}> Sign up!</Link></h6>
                 </Container>
                     </Col>
                     <Col  md={7} className="cont-img" >

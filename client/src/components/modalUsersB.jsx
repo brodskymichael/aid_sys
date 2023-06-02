@@ -7,10 +7,10 @@ import question from '../assets/question.svg';
 import uploadMedia from '../assets/uploadMedia.svg';
 import '../styles/modalUsersB.css';
 import Form from 'react-bootstrap/Form';
-import { postMessage, sendQuestion } from '../redux/actions/index';
+import { postMessage, sendQuestion, getreceivedmsg } from '../redux/actions/index';
 import { useDispatch } from 'react-redux';
 import { flushSync } from 'react-dom';
-
+import Swal from 'sweetalert2';
 
 
 
@@ -81,24 +81,51 @@ const ModalUsersB = ({show, handleClose, handleShow, userB, userA, socket}) => {
     e.preventDefault();
     //console.log(textarea)
     //console.log(image)
-    let form = {
-      body: textarea,
-      image: image,
-      video: video,
-      receptorid: userA._id,
-      emisorid:userB._id
+    if(textarea.replace(/ /g,'').length){
+      let mecha = await dispatch(getreceivedmsg({id:userA._id}))
+      let hasUnseen = false
+      mecha.payload.data.map((e)=>{
+        if(!e.seen){
+          console.log(e)
+          hasUnseen=true
+        } 
+      })
+      if(hasUnseen){
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: "Can't send messages to this user because has unseen ones!",
+        })
+      }else{
+        let form = {
+          body: textarea,
+          image: image,
+          video: video,
+          receptorid: userA._id,
+          emisorid:userB._id
+        }
+      
+        socket.emit("newMessage", form);
+      
+        //dispatch(postMessage(form))
+        handleClose()
+        setImage('')
+        setVideo('')
+        setTextarea('')
+        
+        document.getElementById('img').style.display = "none"
+        document.getElementById('vid').style.display = "none"
+      }
+   
+    }else{
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: "Can't send empty messages!",
+      })
     }
     
-    socket.emit("newMessage", form);
-    
-    //dispatch(postMessage(form))
-    handleClose()
-    setImage('')
-    setVideo('')
-    setTextarea('')
-    
-    document.getElementById('img').style.display = "none"
-    document.getElementById('vid').style.display = "none"
+   
   }
   const showFileInput = () =>{
     document.getElementById('textarea-id').style.display = "none"
@@ -118,10 +145,33 @@ const ModalUsersB = ({show, handleClose, handleShow, userB, userA, socket}) => {
 
   const sendQuestion2 = ()=>{
 
-    socket.emit("askMood", {user: userA._id});
+    Swal.fire({
+      title: 'Send mood question?',
+      showDenyButton: false,
+      showCancelButton: true,
+      confirmButtonText: 'Send',
+      denyButtonText: 'No',
+      customClass: {
+        actions: 'my-actions',
+        cancelButton: 'order-1 right-gap',
+        confirmButton: 'order-2',
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        socket.emit("askMood", {user: userA._id});
+        Swal.fire('Sent!', '', 'success')
+        handleClose()
+        setImage('')
+        setVideo('')
+        setTextarea('')
+        
+        document.getElementById('img').style.display = "none"
+        document.getElementById('vid').style.display = "none"
+      }
+    })
+    
     //dispatch(sendQuestion({user: userA._id}))
     //handleClose()
-    alert('Question for mood sent!')
   }
 
   return (
@@ -142,10 +192,10 @@ const ModalUsersB = ({show, handleClose, handleShow, userB, userA, socket}) => {
               <Form.Control as="textarea" id='textarea-id' rows={3} placeholder='What do you want to talk about?' onChange={(e) => setTextarea(e.target.value)} />
               <Form.Control id='file-id' type="file" accept="image/png, image/jpeg, image/jpg" style={{display: 'none'}} onChange={uploadImage}/>
               {loading? ( <h3>Loading Images...</h3>) : <></>}
-              <img src={image} style={{width:'200px', height:'250px', display:'none'}} id="img" />
+              <img src={image} style={{maxWidth:'60vw', maxHeight:'30vh',display:'none'}} id="img" />
               <Form.Control id='video-id' type="file" accept="video/*" style={{display: 'none'}} onChange={uploadVideo}/>
               {loadingV? ( <h3>Loading Video...</h3>) :<></>}
-              <video src={video} style={{width:'200px', height:'250px',display:'none'}} id="vid"/>
+              <video src={video} style={{maxWidth:'60vw', maxHeight:'30vh',display:'none'}} id="vid"/>
             </Form.Group>   
             <Form.Group>
               <button type='button' className='options-media' onClick={showFileInput}><img src={imagen}/> Image</button>

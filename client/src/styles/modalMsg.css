@@ -21,4 +21,10 @@
 .text-emoji{
     font-size: 15px;
 }
-
+.modal-mensaje > .modal-dialog > .modal-content{
+    width: 85vw !important;
+    height: 85vh !important;
+}
+.modal-mensaje > .modal-dialog{
+    margin-left: 7.5vw !important;
+}

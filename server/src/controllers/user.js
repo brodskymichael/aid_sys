@@ -84,11 +84,18 @@ export const updateStates = async (req, res) =>{
 }
 export const updateStatesBreak = async (req, res) =>{
     
-    let { user, breaks} = req.body;
+    let { user, breaks, userid, rt, wt} = req.body;
+    
+  
+    var today = new Date();
+    var y = new Date(rt)
 
+    let resta = (today -y)/60000
+    
+   //console.log(wt, resta)
     let userAfound = await User.updateOne(
-        {name: user.userName},
-        { $set: {breaks:breaks+1, on_break:true}}
+        {_id: userid},
+        { $set: {breaks:breaks+1, on_break:true, reference_time:today, work_time:wt+resta}}
     )
     if(userAfound){
         return userAfound
@@ -99,11 +106,16 @@ export const updateStatesBreak = async (req, res) =>{
 }
 export const updateBreakFalse = async (req, res) =>{
     
-    let { user} = req.body;
-
+    let { user, userid, rt, bt, breaks} = req.body;
+    
+    var today = new Date();
+    let resta =(today - new Date(rt))/60000
+    let aux =breaks
+ 
+    if(resta<3) aux = breaks-1
     let userAfound = await User.updateOne(
-        {name: user.userName},
-        { $set: {on_break:false}}
+        {_id: userid},
+        { $set: {on_break:false, breaks:aux, break_time: bt + resta, reference_time: today}}
     )
     if(userAfound){
         return userAfound

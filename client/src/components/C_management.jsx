@@ -25,7 +25,7 @@ import { Link } from "react-router-dom";
 import { InputSwitch } from 'primereact/inputswitch';
 import logouticon from '../assets/logout.svg';
 import { logoutUser, deleteUser} from '../redux/actions';
-
+import Swal from 'sweetalert2';
 import { useNavigate } from "react-router-dom";
 
 
@@ -41,18 +41,18 @@ const C_management = ({socket}) => {
     
     let allusersA=[]
     
-    let userC = {}
+    let userC = JSON.parse(localStorage.getItem('user'))
     allusers.map((e)=>{
         if(e.userType==="A"){
             allusersA.push(e)
         }
     })
  
-    allusers.map((e)=>{
+    /*allusers.map((e)=>{
         if(e.userType==="C"){
            userC = e
         }
-    })
+    })*/
  
     
     let aux = []
@@ -96,11 +96,33 @@ const C_management = ({socket}) => {
         let getusers= setInterval(dispatch(getUsers()), 1000);
     }
     const deleter = (e)=>{
-        let deleteduser= document.getElementById('formHorizontalRadios1').value
-        console.log(deleteduser)
-        dispatch(deleteUser({_id:deleteduser}))
-        dispatch(getUsers())
-         
+        
+        if(document.querySelector('input[name="formHorizontalRadios"]:checked')){
+            let deleteduser = document.querySelector('input[name="formHorizontalRadios"]:checked').value;
+            Swal.fire({
+                title: 'Do you want to delete this user?',
+                showDenyButton: false,
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                denyButtonText: 'No',
+                customClass: {
+                  actions: 'my-actions',
+                  cancelButton: 'order-1 right-gap',
+                  confirmButton: 'order-2',
+                  denyButton: 'order-3',
+                }
+              }).then(async(result) => {
+                if (result.isConfirmed) {
+                    await dispatch(deleteUser({_id:deleteduser}))
+                    await dispatch(getUsers())
+                  Swal.fire('Saved!', '', 'success')
+                }
+              })
+              
+           
+            //console.log(deleteduser)  
+        }
+        
      }
 
     const actionBodyTemplate = (e) => {
@@ -142,17 +164,37 @@ const C_management = ({socket}) => {
         
     };
     const logout =() =>{
-        try{
-            dispatch(logoutUser(userC));
-            socket.emit("newLog")
-            Cookie.remove('_auth');
-            Cookie.remove('_auth_storage');
-            Cookie.remove('_auth_state');
-            Cookie.remove('_auth_type')
-            navigate('/login')
-        }catch(e){
-            console.log(e)
-        }
+        Swal.fire({
+            title: 'Are you sure you want to logout?',
+            showDenyButton: false,
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            denyButtonText: 'No',
+            customClass: {
+              actions: 'my-actions',
+              cancelButton: 'order-1 right-gap',
+              confirmButton: 'order-2',
+              denyButton: 'order-3',
+            }
+          }).then((result) => {
+            if (result.isConfirmed) {
+                try{
+                    dispatch(logoutUser(userC));
+                    socket.emit("newLog")
+                    Cookie.remove('_auth');
+                    Cookie.remove('_auth_storage');
+                    Cookie.remove('_auth_state');
+                    Cookie.remove('_auth_type');
+                    localStorage.clear();
+                    navigate('/')
+                }catch(e){
+                    console.log(e)
+                }
+              //Swal.fire('Saved!', '', 'success')
+            }
+          })
+          
+
        
     }
     
@@ -161,7 +203,7 @@ const C_management = ({socket}) => {
     useEffect(() => {
         dispatch(getUsers())
         mostrarFecha()
-        //temporizador()
+        temporizador()
        
         
     },[fecha, hora,usersA])
@@ -175,7 +217,7 @@ const C_management = ({socket}) => {
         
             {userC.login_today!=1?(
                 <div className='cont-btn-log'>
-                <Link to= '/login'>
+                <Link to= '/'>
                 <button className="btnLo">Go Login!</button>
                 </Link>
                 </div>

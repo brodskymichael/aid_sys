@@ -1,6 +1,6 @@
 import { Table, Button, Row, Col, Badge, FormCheck} from 'react-bootstrap';
 import { useState, useEffect, useRef } from 'react';
-import { getUsers, updateSettings } from "../redux/actions/index";
+import { getSettings, getUsers, updateSettings, updateSettingsNewUser } from "../redux/actions/index";
 import { useDispatch, useSelector } from 'react-redux';
 import welcome from '../assets/welcomeBack.svg';
 import addUser from '../assets/addUser.svg';
@@ -9,7 +9,7 @@ import filter from '../assets/filter.svg';
 import titulo from '../assets/titulo.svg';
 import brujula from '../assets/brujula.svg';
 import management from '../assets/management.svg';
-import settings from '../assets/settings.svg';
+import settingss from '../assets/settings.svg';
 import lupa from '../assets/lupa.svg';
 import '../styles/B_management.css';
 import Form from 'react-bootstrap/Form';
@@ -26,6 +26,8 @@ import { Link } from "react-router-dom";
 import logouticon from '../assets/logout.svg';
 import { logoutUser} from '../redux/actions';
 import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
+import FormCheckInput from 'react-bootstrap/esm/FormCheckInput';
 
 
 
@@ -38,22 +40,25 @@ const B_settings = ({socket}) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const allusers = useSelector((state) => state.users);
+    const settings = useSelector((state) => state.settings);
+    
     
     let allusersA=[]
     
-    let userB = {}
+    let userB = JSON.parse(localStorage.getItem('user'))
+
     allusers.map((e)=>{
         if(e.userType==="A"){
             allusersA.push(e)
         }
     })
  
-    allusers.map((e)=>{
+    /*allusers.map((e)=>{
         if(e.userType==="B"){
           
            userB= e
         }
-    })
+    })*/
 
     let aux = []
     aux=allusersA
@@ -88,26 +93,95 @@ const B_settings = ({socket}) => {
 
     function temporizador() {
         let identificadorTiempoDeEspera = setInterval(mostrarHora, 1000);
-        let getusers= setInterval(dispatch(getUsers()), 1000);
+       
     }
 
-    const actionBodyTemplate = (e) => {
-        return <>
-            <FormCheck></FormCheck>
-        </>;
-    };
-    const logout =() =>{
-        try{
-            dispatch(logoutUser(userB));
-            socket.emit("newLog")
-            Cookie.remove('_auth');
-            Cookie.remove('_auth_storage');
-            Cookie.remove('_auth_state');
-            Cookie.remove('_auth_type')
-            navigate('/login')
-        }catch(e){
-            console.log(e)
+    
+    const changeNewUser = () => {
+        const radioButtons = document.querySelector('input[name="formHorizontalRadios"]');
+        if(settings.new_user){
+            //let deleteduser = document.querySelector('input[name="formHorizontalRadios"]:checked');
+            Swal.fire({
+                title: 'Disable new user registration?',
+                showDenyButton: false,
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                denyButtonText: 'No',
+                customClass: {
+                  actions: 'my-actions',
+                  cancelButton: 'order-1 right-gap',
+                  confirmButton: 'order-2',
+                  denyButton: 'order-3',
+                }
+              }).then(async(result) => {
+                if (result.isConfirmed) {
+                    let new_user = false
+                    await dispatch(updateSettingsNewUser({new_user:new_user}))
+                  Swal.fire('Saved!', '', 'success')
+                }else{
+                    document.getElementById('register-checkbox').checked = true
+                }
+
+              })
+              
+           
+            //console.log(deleteduser)  
+        }else{
+            Swal.fire({
+                title: 'Enable new user registration?',
+                showDenyButton: false,
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                denyButtonText: 'No',
+                customClass: {
+                  actions: 'my-actions',
+                  cancelButton: 'order-1 right-gap',
+                  confirmButton: 'order-2',
+                  denyButton: 'order-3',
+                }
+              }).then(async(result) => {
+                if (result.isConfirmed) {
+                    let new_user = true
+                    await dispatch(updateSettingsNewUser({new_user:new_user}))
+                  Swal.fire('Saved!', '', 'success')
+                }else{
+                    document.getElementById('register-checkbox').checked = false
+                }
+              })
+
         }
+
+    }
+    const logout =() =>{
+        Swal.fire({
+            title: 'Are you sure you want to logout?',
+            showDenyButton: false,
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            denyButtonText: 'No',
+            customClass: {
+                actions: 'my-actions',
+                cancelButton: 'order-1 right-gap',
+                confirmButton: 'order-2',
+                denyButton: 'order-3',
+            }
+            }).then((result) => {
+            if (result.isConfirmed) {
+                try{
+                    dispatch(logoutUser(userB));
+                    socket.emit("newLog")
+                    Cookie.remove('_auth');
+                    Cookie.remove('_auth_storage');
+                    Cookie.remove('_auth_state');
+                    Cookie.remove('_auth_type');
+                    localStorage.clear();
+                    navigate('/')
+                }catch(e){
+                    console.log(e)
+                }
+                //Swal.fire('Saved!', '', 'success')
+            }
+        }) 
     }
 
     const [errors, setErrors] = useState('')
@@ -135,15 +209,29 @@ const B_settings = ({socket}) => {
     useEffect(() => {
         dispatch(getUsers())
         mostrarFecha()
-        //temporizador()
+        temporizador()
     },[fecha, hora,usersA, errors])
+    useEffect(() => {
+        dispatch(getSettings())
+       
+    },[])
+    useEffect(() => {
+        console.log(settings)
+        let check = document.getElementById('register-checkbox')
+        if(check && settings && settings.new_user){
+            check.checked=true
+        }else if(check){
 
+            check.checked=false
+        }
+    },[settings])
+   
 
     return(
         <>
             {userB.login_today!=1?(
                 <div className='cont-btn-log'>
-                <Link to= '/login'>
+                <Link to= '/'>
                 <button className="btnLo">Go Login!</button>
                 </Link>
                 </div>
@@ -162,7 +250,7 @@ const B_settings = ({socket}) => {
                         <button className='boton-side-bar'><img src={management} width='25px' height='25px'/> Management</button>
                         </Link>
                         <Link to= '/B/settings'>
-                        <button className='boton-selected'><img src={settings} width='25px' height='25px'/> Settings</button>   
+                        <button className='boton-selected'><img src={settingss} width='25px' height='25px'/> Settings</button>   
                         </Link>
                     </ul>
                     <ul>
@@ -186,10 +274,16 @@ const B_settings = ({socket}) => {
                         <div className='contenedor-tabla'>
                         <Form.Group className='sett'>
                             <h6>Sampling Cycle:</h6>
-                            <input id='sampling_cycle' type="number" min='1' className='sett-inp'></input>
+                            <input id='sampling_cycle' type="number" min='1' className='sett-inp' placeholder={settings.sampling_cycle}></input>
                             <h6>User Count Reference:</h6>
-                            <input id='count_ref_number' type="number" min='1' className='sett-inp'></input>
+                            <input id='count_ref_number' type="number" min='1' className='sett-inp' placeholder={settings.count_ref_number}></input>
                         </Form.Group>
+                        <input
+                            type="checkbox"
+                            name="formHorizontalRadios"
+                            id="register-checkbox"
+                            onChange={changeNewUser}
+                        />New user's registration available
                         </div>
                         <button className="update-botton"  onClick={SubmitSettings}>
                             Update Settings  
@@ -199,7 +293,7 @@ const B_settings = ({socket}) => {
                         }
                     
                     </Col>
-                
+                        
                     </Row>
                 </div> 
                 </>

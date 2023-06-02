@@ -8,7 +8,8 @@ const initialState = {
     refreshToken: null,
     usersA:[],
     received_msg:[],
-    send_msg:[]
+    send_msg:[],
+    settings:{}
 
 }
 
@@ -96,6 +97,15 @@ function rootReducer(state = initialState, action){
         case 'UPDATE_BREAK_FALSE':
         return{
             ...state
+        }
+        case 'UPDATE_SETTINGS_NEW_USER':
+        return{
+            ...state
+        }
+        case 'GET_SETTINGS_NEW_USER':
+        return {
+            ...state,
+            settings: action.payload
         }
         default:
             return state;

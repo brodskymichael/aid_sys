@@ -11,7 +11,7 @@ const ACCESS_TOKEN_SECRET="14163637a637dbb5066b90949d2c87eb65081a2203c60e9a29f56
 const REFRESH_TOKEN_SECRET= "561f08e59feff7080e5629fc78ff7c490b15fe8ada4ce33bfe064c4fbbf28c3af2a887a41c19e61b29927df5c5051bf96451b25c6bf9050786f4d77dc2cf7519"
 
 const login = asyncHandler(async (req, res)=>{
-    const { user, pwd } = req.body
+    const { user, pwd,type } = req.body
     //console.log(user, pwd)
 
     if (!user || !pwd) {
@@ -23,6 +23,10 @@ const login = asyncHandler(async (req, res)=>{
     //console.log(foundUser)
 
     if (!foundUser) {
+        return res.status(401).json({ message: 'Unauthorized' })
+    }
+
+    if (foundUser.userType === 'A' && type != 'A') {
         return res.status(401).json({ message: 'Unauthorized' })
     }
 
@@ -63,44 +67,13 @@ const login = asyncHandler(async (req, res)=>{
     })
 
     foundUser.login_today=1;
+    foundUser.reference_time= new Date()
     foundUser.save()
 
     // Send accessToken containing username and roles 
     res.json({ message:'Welcome Back!',token:accessToken, refreshToken: refreshToken, user:foundUser })
 })
 
-/*const refresh = async (req, res)=>{
-    const cookies = req.cookies
-    console.log(cookies)
-    if (!cookies?.jwt) return res.status(401).json({ message: 'Unauthorized' })
-
-    const refreshToken = cookies.jwt
-
-    jwt.verify(
-        refreshToken,
-        REFRESH_TOKEN_SECRET,
-        asyncHandler(async (err, decoded) => {
-            if (err) return res.status(403).json({ message: 'Forbidden' })
-
-            const foundUser = await User.findOne({ user: decoded.user }).exec()
-
-            if (!foundUser) return res.status(401).json({ message: 'Unauthorized' })
-
-            const accessToken = jwt.sign(
-                {
-                    "UserInfo": {
-                        "user": foundUser.user,
-                        "userType": foundUser.userType
-                    }
-                },
-                ACCESS_TOKEN_SECRET,
-                { expiresIn: '15m' }
-            )
-
-            res.json({ accessToken })
-        })
-    )
-}*/
 
 const logout = async (req, res)=>{
     const {_id} = req.body;
@@ -114,10 +87,16 @@ const logout = async (req, res)=>{
         expires: new Date(Date.now() + 5 * 1000),
         httpOnly: true,
     })
-   
+    let user = await User.findOne({_id:_id})
+    
+    var today = new Date();
+    
+
+    let resta = (today - user.reference_time)/60000
+  
     await User.updateOne(
         {_id: _id},
-        { $set: {login_today:2}}
+        { $set: {login_today:2, reference_time:new Date(), work_time: user.work_time+resta}}
     )
     res
         .status(200)

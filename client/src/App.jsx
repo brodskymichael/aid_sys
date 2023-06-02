@@ -24,8 +24,8 @@ function App() {
       <main className='App'>
       
         <Routes>
-          <Route path="/" exact element={ <Register/> } />
-          <Route path="/login" exact element={ <Login socket={socket}/> } />
+          <Route path="/" exact element={ <Login socket={socket}/> } />
+          <Route path="/register" exact element={ <Register /> } />
           <Route path='A' excat element={<UsersA socket={socket}/>}/>
           <Route path='B' exact element={<UsersB socket={socket}/>}/>
           <Route path='C' exact element={<UsersC socket={socket}/>}/>

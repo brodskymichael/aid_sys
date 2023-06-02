@@ -7,12 +7,21 @@ import down from '../assets/down.svg';
 import sad from '../assets/sad.svg';
 import bad from '../assets/bad.svg';
 import breakbutton from '../assets/breakbutton.svg';
-import '../styles/modalEmoji.css';
+import '../styles/modalMsg.css';
+import { markSeen } from '../redux/actions';
+import { useDispatch } from 'react-redux';
 
 const Messages = ({show, handleClose, messages, users}) => {
+  const dispatch = useDispatch();
   if(messages && messages.length){
    let rev= messages.slice().reverse()
-   console.log(messages)
+   //console.log(messages)
+   messages.map(async (e)=>{
+    if(!e.seen){
+        console.log(e)
+        await dispatch(markSeen({id_msg:e._id}))
+    } 
+})
   return (
     <>
       <Modal
@@ -20,6 +29,7 @@ const Messages = ({show, handleClose, messages, users}) => {
         onHide={handleClose}
         backdrop="static"
         keyboard={false}
+        className='modal-mensaje'
       >
         <Modal.Header closeButton></Modal.Header>
         <Modal.Body className='pic-msg'>
@@ -30,8 +40,8 @@ const Messages = ({show, handleClose, messages, users}) => {
                   if(u._id===e.emisorid) return (<h5 key={i}>Message from: {u.user}</h5>)
                 })}
                 <p key={i}>{e.body}</p>
-                {e.image?<img src={e.image} width='200px' height='250px' key={i}></img>:<></>}
-                {e.video?<video src={e.video} width='200px' height='250px' key={i}></video>:<></>}
+                {e.image?<img src={e.image} style={{maxWidth:'60vw', maxHeight:'30vh'}} key={i}></img>:<></>}
+                {e.video?<video src={e.video} style={{maxWidth:'60vw', maxHeight:'30vh'}} key={i}></video>:<></>}
               </div>
             )
           })}

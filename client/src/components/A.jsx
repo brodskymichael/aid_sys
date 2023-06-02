@@ -16,6 +16,7 @@ import Example from './ModalBreak';
 import ModalEmojis from './ModalEmojis';
 import Messages from './modalMsg';
 import bell from '../assets/bell.svg';
+import Swal from 'sweetalert2';
 
 
 
@@ -39,8 +40,9 @@ const UsersA = ({socket}) => {
     const [show3, setShow3] = useState(false);
 
     const handleClose = async () =>{
+
         setShow(false);
-        dispatch(updateBreakFalse({user:location.state}))
+        dispatch(updateBreakFalse({user:location.state, userid: usuario._id, rt:usuario.reference_time,  bt:usuario.break_time, breaks:usuario.breaks}))
         socket.emit("newLog")
           
     } 
@@ -53,7 +55,9 @@ const UsersA = ({socket}) => {
     const handleShow3 = () => {setShow3(true)};
 
     const getUsuarioA = async()=>{
-        setUsuario(await dispatch(getUserA({name:location.state.userName})));
+        let usuarioA = await dispatch(getUserA({name:location.state.userName}));
+        setUsuario(usuarioA)
+        if(usuarioA.on_break) handleShow(true);
     }
   
    
@@ -68,11 +72,14 @@ const UsersA = ({socket}) => {
         socket.emit("newLog")
     }
     const clickBreak = () => {
-       
+
         setBreaks(breaks+1)
         let info = {
             user:location.state,
-            breaks: breaks
+            breaks: breaks,
+            userid: usuario._id,
+            rt:usuario.reference_time,
+            wt:usuario.work_time
         }
         handleShow();
         dispatch(updateStatesBreak(info));
@@ -86,7 +93,7 @@ const UsersA = ({socket}) => {
         let minutes= now.getMinutes();
         let str = ora+':'+minutes
         setHora(str)
-        console.log(hora)
+        //console.log(hora)
     }
     const mostrarFecha = () =>{
         const tiempoTranscurrido = Date.now();
@@ -98,53 +105,70 @@ const UsersA = ({socket}) => {
     }
 
     const logout =async () =>{
-        //console.log(usuario)
-        try{
-            await dispatch(logoutUser({_id:usuario._id}));
-            socket.emit("newLog")
-            Cookie.remove('_auth');
-            Cookie.remove('_auth_storage');
-            Cookie.remove('_auth_state');
-            Cookie.remove('_auth_type')
-            navigate('/login')
-        }catch(e){
-            console.log(e)
-        }
+        Swal.fire({
+            title: 'Are you sure you want to logout?',
+            showDenyButton: false,
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            denyButtonText: 'No',
+            customClass: {
+              actions: 'my-actions',
+              cancelButton: 'order-1 right-gap',
+              confirmButton: 'order-2',
+            }
+          }).then((result) => {
+            if (result.isConfirmed) {
+                try{
+                    dispatch(logoutUser({_id:usuario._id}));
+                    socket.emit("newLog")
+                    Cookie.remove('_auth');
+                    Cookie.remove('_auth_storage');
+                    Cookie.remove('_auth_state');
+                    Cookie.remove('_auth_type');
+                    localStorage.clear();
+                    navigate('/')
+                }catch(e){
+                    console.log(e)
+                }
+              //Swal.fire('Saved!', '', 'success')
+            }
+          })
+          
+
        
     }
 
     function temporizador() {
-        //let identificadorTiempoDeEspera = setInterval(mostrarHora, 1000);
-        let identificadorTiempoDeEspera2 = setInterval(getMessages, 1000);
-
+        let identificadorTiempoDeEspera = setInterval(mostrarHora, 1000);
     }
    
     const getMessages = async () =>{
         if(usuario._id){
             let mecha = await dispatch(getreceivedmsg({id:usuario._id}))
-            //console.log(mecha.payload.data)
-            setMessages(mecha.payload.data)
-            
-            
+            console.log(mecha.payload.data)
+            setMessages(mecha.payload.data)  
         }
     }
     const getUnseenMessages = async ()=>{
         if(messages && messages.length){
             for (var i = 0; i < messages.length; i++) {
                 if (!messages[i].seen) {
-                //console.log(messages[i])
+                    console.log(messages[i])
                   handleShow2()
                   break;
                 }
             }
             messages.map(async (e)=>{
-                if(!e.seen) await dispatch(markSeen({id_msg:e._id}))
+                if(!e.seen){
+                    console.log(e)
+                    await dispatch(markSeen({id_msg:e._id}))
+                } 
             })
         }
     }
     useEffect(() => {
         mostrarFecha();
-        //temporizador()
+        temporizador()
         //handleShow();
         //getMessages()  
         //dispatch(getreceivedmsg({id:usuario._id}))
@@ -163,7 +187,7 @@ const UsersA = ({socket}) => {
         setBreaks(usuario.breaks)
 
         if(usuario && usuario.questionPending){
-            console.log(usuario)
+            //console.log(usuario)
             handleShow3()
         } 
         getMessages()
@@ -172,8 +196,12 @@ const UsersA = ({socket}) => {
         
     },[usuario])
 
-    socket.on("sendMessage", function(msg){
-        //console.log("socket working on the frontend: ", msg);
+    socket.on("sendMessage",async function(msg){
+        console.log(msg);
+        if(msg.receptorid==usuario._id){
+            handleShow2()
+            await dispatch(markSeen({id_msg:msg._id}))
+        }
         getMessages()
         getUnseenMessages()
         
@@ -194,7 +222,7 @@ const UsersA = ({socket}) => {
         <>
             {usuario.login_today!=1 && usuario.userType!='A'?(
                 <div className='cont-btn-log'>
-                <Link to= '/login'>
+                <Link to= '/'>
                 <button className="btnLo">Go Login!</button>
                 </Link>
                 </div>
@@ -270,7 +298,7 @@ const UsersA = ({socket}) => {
             <h1></h1>
         </div>
         <Example show={show} handleClose={handleClose} usuario={usuario}/> 
-        <Messages show={show2} handleClose={handleClose2} messages={messages} users={users}/>
+        <Messages show={show2} handleClose={handleClose2} messages={messages} users={users} style={{width:'85vw', height:'85vh'}}/>
         <ModalEmojis show={show3} handleClose={handleClose3} usuario={usuario._id} socket={socket} />
         </>)}
         </>

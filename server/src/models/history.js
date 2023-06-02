@@ -18,6 +18,14 @@ const   HistorySchema = new Schema({
     },
     day:{
         type:String
+    },
+    work_time:{
+        type:Number,
+        default:0
+    },
+    break_time:{
+        type:Number,
+        default:0
     }
     
 },

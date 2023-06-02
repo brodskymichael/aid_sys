@@ -4,7 +4,7 @@ import { loginLimiter } from "../middleware/loginLimiter.js";
 import user from '../models/user.js'
 import {login, logout} from '../controllers/auth.js';
 import { markSeen, postMessage, receivedMessages, sendMessages } from "../controllers/message.js";
-import { updateSettings } from "../controllers/settings.js";
+import { updateSettings, settingRegistration, getSettings } from "../controllers/settings.js";
 
 //import { verifyJWT } from "../middleware/verifyJWT.js";
 
@@ -149,5 +149,24 @@ router.post('/updatesettings', async (req, res)=>{
     res.status(404).send("cannot update settings", e)
   }
 })
+router.post('/updatesettingsNewUser', async (req, res)=>{
+  try{
+    let actual_settings = await settingRegistration(req);
+    return res.json(actual_settings)
+  }catch(e){
+    res.status(404).send("cannot update settings", e)
+  }
+})
+router.get('/getSettings', async (req, res)=>{
+  console.log('llega')
+  try{
+    const actual_settings = await getSettings();
+    res.status(200).send(actual_settings);
+  }catch(e){
+    res.status(404).send("cannot get settings", e)
+  }
+})
+
+
 
 export default router;

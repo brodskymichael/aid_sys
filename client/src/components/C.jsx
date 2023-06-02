@@ -20,8 +20,10 @@ import ok from '../assets/ok.svg';
 import down from '../assets/down.svg';
 import sad from '../assets/sad.svg';
 import bad from '../assets/bad.svg';
-import red_arrow from '../assets/red_arrow.svg';
+import redquestion from '../assets/redquestion.svg';
 
+import red_arrow from '../assets/red_arrow.svg';
+import Swal from 'sweetalert2';
 
 
 
@@ -37,18 +39,19 @@ const UsersC = ({socket}) => {
     
     let allusersA=[]
     
-    let userC = {}
+    let userC = JSON.parse(localStorage.getItem('user'))
+
     allusers.map((e)=>{
         if(e.userType==="A"){
             allusersA.push(e)
         }
     })
  
-    allusers.map((e)=>{
+   /* allusers.map((e)=>{
         if(e.userType==="C"){
            userC=e
         }
-    })
+    })*/
  
     
     let aux = []
@@ -94,20 +97,45 @@ const UsersC = ({socket}) => {
 
     
     const logout =() =>{
-        try{
-            dispatch(logoutUser(userC));
-            socket.emit("newLog")
-            Cookie.remove('_auth');
-            Cookie.remove('_auth_storage');
-            Cookie.remove('_auth_state');
-            Cookie.remove('_auth_type')
-            navigate('/login')
-        }catch(e){
-            console.log(e)
-        }
+        Swal.fire({
+            title: 'Are you sure you want to logout?',
+            showDenyButton: false,
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            denyButtonText: 'No',
+            customClass: {
+              actions: 'my-actions',
+              cancelButton: 'order-1 right-gap',
+              confirmButton: 'order-2',
+              denyButton: 'order-3',
+            }
+          }).then((result) => {
+            if (result.isConfirmed) {
+                try{
+                    dispatch(logoutUser(userC));
+                    socket.emit("newLog")
+                    Cookie.remove('_auth');
+                    Cookie.remove('_auth_storage');
+                    Cookie.remove('_auth_state');
+                    Cookie.remove('_auth_type');
+                    localStorage.clear();
+                    navigate('/')
+                }catch(e){
+                    console.log(e)
+                }
+              //Swal.fire('Saved!', '', 'success')
+            }
+          })
+          
+
        
     }
     const actionBodyTemplate = (e) => {
+        if(e.mood== '0'){
+            return <>
+            <img src={redquestion}/>            
+            </>
+        }
         if(e.mood == '1'){
             return <>
             <img src={goodMood}/>            
@@ -178,7 +206,7 @@ const UsersC = ({socket}) => {
     useEffect(() => {
         dispatch(getUsers())
         mostrarFecha()
-        //temporizador()
+        temporizador()
        
         
     },[fecha, hora,usersA])
@@ -218,7 +246,7 @@ const UsersC = ({socket}) => {
         <>
             {userC.login_today!=1?(
                 <div className='cont-btn-log'>
-                <Link to= '/login'>
+                <Link to= '/'>
                 <button className="btnLo">Go Login!</button>
                 </Link>
                 </div>
@@ -275,6 +303,8 @@ const UsersC = ({socket}) => {
                                     <Column field="username" header="User" className='colum'></Column>
                                     <Column field="breaks" header="Breaks"  className='colum'></Column>
                                     <Column field="counter" header="Counter"  className='colum'></Column>
+                                    <Column field="work_time" header="Work Time (mins)"  className='colum'></Column>
+                                    <Column field="break_time" header="Break Time (mins)"  className='colum'></Column>
                                 </DataTable>
                             }
                         </div>

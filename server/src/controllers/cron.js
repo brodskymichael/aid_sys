@@ -41,13 +41,18 @@ export const reset = async ()=>{
                 breaks: e.breaks,
                 user: e._id,
                 username:e.name,
-                day:defaultValue
+                day:defaultValue,
+                work_time: e.work_time,
+                break_time:e.break_time
                 })
                 e.login_today = 0;
                 e.counter = 0;
                 e.breaks = 0;
                 e.previous_counter = 0;
                 e.distress=false;
+                e.mood=0;
+                e.work_time=0;
+                e.break_time=0;
                 e.save();
             }
             

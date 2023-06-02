@@ -175,3 +175,29 @@ export function updateSettings(payload){
         })
     }
 }
+export function updateSettingsNewUser(payload){
+    console.log(payload)
+    return async function(dispatch){
+        const json = await axios.post('http://localhost:9000/updatesettingsNewUser', payload)
+        return dispatch({
+            type:'UPDATE_SETTINGS_NEW_USER',
+            payload:json
+        })
+    }
+}
+
+export function getSettings(){ 
+    return async function(dispatch){
+        var json = await axios('http://localhost:9000/getSettings',{}); 
+        //console.log(json)
+        return dispatch({
+            type: 'GET_SETTINGS_NEW_USER',
+            payload: json.data
+        })
+    }
+}
+
+
+
+
+

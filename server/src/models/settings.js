@@ -10,6 +10,10 @@ const SettingsSchema = new Schema({
     count_ref_number:{
         type: Number,
         default:20
+    },
+    new_user:{
+        type: Boolean,
+        default:true
     }
 },
     {
