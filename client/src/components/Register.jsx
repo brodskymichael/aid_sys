@@ -120,15 +120,11 @@ const Register = () => {
         }
 
     }
-    /*const Gsettings = async () =>{
-       let p = await dispatch(getSettings())
-       
-       console.log(settings)
-    }*/
+   
 
     return (
         <>
-            {settings.new_user?(
+            {/*settings.new_user*/true?(
                     <Row>
                 
                 <Col  md={5}>

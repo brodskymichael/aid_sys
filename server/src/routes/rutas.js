@@ -158,7 +158,7 @@ router.post('/updatesettingsNewUser', async (req, res)=>{
   }
 })
 router.get('/getSettings', async (req, res)=>{
-  console.log('llega')
+
   try{
     const actual_settings = await getSettings();
     res.status(200).send(actual_settings);

@@ -204,8 +204,7 @@ const C_management = ({socket}) => {
         dispatch(getUsers())
         mostrarFecha()
         temporizador()
-       
-        
+    
     },[fecha, hora,usersA])
 
     socket.on("RTAlog", function(){

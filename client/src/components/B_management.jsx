@@ -93,6 +93,8 @@ const B_management = ({socket}) => {
         setFecha(fecha);
 
     }
+
+    
     function temporizador() {
         let identificadorTiempoDeEspera = setInterval(mostrarHora, 1000);
         let getusers= setInterval(dispatch(getUsers()), 1000);

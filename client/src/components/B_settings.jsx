@@ -80,7 +80,6 @@ const B_settings = ({socket}) => {
         let minutes= now.getMinutes();
         let str = ora+':'+minutes
         setHora(str)
-        console.log(hora)
     }
 
     const mostrarFecha = () =>{
@@ -117,6 +116,7 @@ const B_settings = ({socket}) => {
                 if (result.isConfirmed) {
                     let new_user = false
                     await dispatch(updateSettingsNewUser({new_user:new_user}))
+                    await dispatch(getSettings())
                   Swal.fire('Saved!', '', 'success')
                 }else{
                     document.getElementById('register-checkbox').checked = true
@@ -143,6 +143,7 @@ const B_settings = ({socket}) => {
                 if (result.isConfirmed) {
                     let new_user = true
                     await dispatch(updateSettingsNewUser({new_user:new_user}))
+                    await dispatch(getSettings())
                   Swal.fire('Saved!', '', 'success')
                 }else{
                     document.getElementById('register-checkbox').checked = false

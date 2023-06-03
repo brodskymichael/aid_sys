@@ -3,7 +3,7 @@ import AuthContext from '../context/AuthProvider'
 import {Form, Table, Button, Container, Row, Col} from 'react-bootstrap';
 import foto from '../assets/signUp.png';
 import titulo from '../assets/titulo.png';
-import { getUsers, loginUser, getUserA } from "../redux/actions/index";
+import { getUsers, loginUser, getUserA, getSettings } from "../redux/actions/index";
 import { useDispatch, useSelector } from 'react-redux';
 import { useSignIn } from 'react-auth-kit'; 
 import { useNavigate } from "react-router-dom";
@@ -37,19 +37,24 @@ const Login = ({socket}) => {
     const [sucessA, setSuccessA] = useState(false);
     const [breaks, setBreaks] = useState(0);
     const [counter, setCounter] = useState(0);
-
+    const settings = useSelector((state) => state.settings);
     const location = useLocation();
    
 
     /*useEffect(() => {
         userRef.current.focus();
     }, [])*/
+    useEffect(() => {
+        dispatch(getSettings())
+       
+    },[])
 
     useEffect(() => {
         setErrMsg('');
         dispatch(getUsers())    
     }, [user, pwd])
 
+   
 
     const handleSubmit = async (e) => {
 
@@ -228,7 +233,9 @@ const Login = ({socket}) => {
                             <button className="btn ">Login</button>
                         </Form.Group>
                         </form>
-                <h6>Don't have an account?<Link to={'/register'} style={{color: '#e14e10'}}> Sign up!</Link></h6>
+                        {settings.new_user?(
+                            <h6>Don't have an account?<Link to={'/register'} style={{color: '#e14e10'}}> Sign up!</Link></h6>
+                         ):<></>}
                 </Container>
                     </Col>
                     <Col  md={7} className="cont-img" >
