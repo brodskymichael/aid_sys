@@ -1,4 +1,4 @@
-import { Table, Button, Row, Col, Badge} from 'react-bootstrap';
+import { Table, Button, Row, Col, Badge } from 'react-bootstrap';
 import { useState, useEffect, useRef } from 'react';
 import { getUsers } from "../redux/actions/index";
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,7 +23,7 @@ import excel from '../assets/excel.svg'
 import pdf from '../assets/pdf.svg';
 import csv from '../assets/csv.svg';
 import logouticon from '../assets/logout.svg';
-import { logoutUser} from '../redux/actions';
+import { logoutUser } from '../redux/actions';
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import goodMood from '../assets/goodMood.svg';
@@ -36,7 +36,7 @@ import red_arrow from '../assets/red_arrow.svg';
 import Swal from 'sweetalert2';
 
 
-const UsersB = ({socket}) => {
+const UsersB = ({ socket }) => {
     const [hora, setHora] = useState('');
     const [fecha, setFecha] = useState('');
     const [search, setSearch] = useState('');
@@ -44,37 +44,37 @@ const UsersB = ({socket}) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const allusers = useSelector((state) => state.users);
-    
-    let allusersA=[]
-    
+
+    let allusersA = []
+
     let userB = JSON.parse(localStorage.getItem('user'))
-    allusers.map((e)=>{
-        if(e.userType==="A"){
+    allusers.map((e) => {
+        if (e.userType === "A") {
             allusersA.push(e)
         }
     })
- 
+
     /*allusers.map((e)=>{
         if(e.userType==="B"){
            userB=e
         }
     })*/
-    
- 
-    
+
+
+
     let aux = []
-    aux=allusersA
+    aux = allusersA
     const [usersA, setUsersA] = useState('');
-    const Search = (e)=>{
-       let filtered= aux.filter((d)=>
+    const Search = (e) => {
+        let filtered = aux.filter((d) =>
             d.user.includes(e.target.value)
         )
-        aux=filtered
+        aux = filtered
         setUsersA(aux)
     }
 
     const [show, setShow] = useState(false);
-    
+
 
     const handleClose = () => setShow(false);
     const handleShow = (e) => {
@@ -82,7 +82,7 @@ const UsersB = ({socket}) => {
         setSelectedUserA(e)
     }
 
-   
+
     const dt = useRef(null);
 
     const cols = [
@@ -90,7 +90,7 @@ const UsersB = ({socket}) => {
         { field: 'breaks', header: 'Breaks' },
         { field: 'counter', header: 'Counter' }
     ];
-    
+
 
     const exportColumns = cols.map((col) => ({ title: col.header, dataKey: col.field }));
 
@@ -107,7 +107,7 @@ const UsersB = ({socket}) => {
             }
         });
     };
-   
+
 
     const exportCSV = (selectionOnly) => {
         dt.current.exportCSV({ selectionOnly });
@@ -136,17 +136,17 @@ const UsersB = ({socket}) => {
             saveAsExcelFile(excelBuffer, 'data');
         });
     };
-    
-   
-    const mostrarHora = () =>{
+
+
+    const mostrarHora = () => {
         const now = new Date();
-        let ora= now.getHours();
-        let minutes= now.getMinutes();
-        let str = ora+':'+minutes
+        let ora = now.getHours();
+        let minutes = now.getMinutes();
+        let str = ora + ':' + minutes
         setHora(str)
         //console.log(hora)
     }
-    const mostrarFecha = () =>{
+    const mostrarFecha = () => {
         const tiempoTranscurrido = Date.now();
         const hoy = new Date(tiempoTranscurrido);
         let fecha = hoy.toDateString()
@@ -155,88 +155,88 @@ const UsersB = ({socket}) => {
     }
     function temporizador() {
         let identificadorTiempoDeEspera = setInterval(mostrarHora, 1000);
-        let getusers= setInterval(dispatch(getUsers()), 1000);
+        let getusers = setInterval(() => dispatch(getUsers()), 1000);
     }
 
-    
+
     const actionBodyTemplate = (e) => {
         //console.log(e)
         return <>
-            <button className="boton-send-media" onClick={()=>handleShow(e)}>Send Media</button>
-                           
+            <button className="boton-send-media" onClick={() => handleShow(e)}>Send Media</button>
+
         </>;
     };
     const actionBodyTemplate3 = (e) => {
-        if(e.login_today == '0'){
+        if (e.login_today == '0') {
             return <>
-            <p style={{color: 'grey'}}>{e.name}</p>            
+                <p style={{ color: 'grey' }}>{e.name}</p>
             </>
         }
-        if(e.on_break){
+        if (e.on_break) {
             return <>
-            <p style={{color: 'red'}}>{e.name}</p>            
+                <p style={{ color: 'red' }}>{e.name}</p>
             </>
         }
-        if(e.login_today == '1'){
+        if (e.login_today == '1') {
             return <>
-            <p style={{color:'green'}}>{e.name}</p>            
+                <p style={{ color: 'green' }}>{e.name}</p>
             </>
         }
-        if(e.login_today == '2'){
+        if (e.login_today == '2') {
             return <>
-            <p style={{color: 'grey'}}><span style={{color: 'red'}}>!</span>{e.name}</p>            
+                <p style={{ color: 'grey' }}><span style={{ color: 'red' }}>!</span>{e.name}</p>
             </>
         }
-        if(e.on_break){
+        if (e.on_break) {
             return <>
-            <p style={{color: 'red'}}><span style={{color: 'red'}}>!</span>{e.name}</p>            
+                <p style={{ color: 'red' }}><span style={{ color: 'red' }}>!</span>{e.name}</p>
             </>
         }
-        
+
     };
-   
+
     const actionBodyTemplate2 = (e) => {
-        if(e.mood== '0'){
+        if (e.mood == '0') {
             return <>
-            <img src={redquestion}/>            
+                <img src={redquestion} />
             </>
         }
-        if(e.mood == '1'){
+        if (e.mood == '1') {
             return <>
-            <img src={goodMood}/>            
+                <img src={goodMood} />
             </>
         }
-        if(e.mood == '2'){
+        if (e.mood == '2') {
             return <>
-            <img src={ok}/>            
+                <img src={ok} />
             </>
         }
-        if(e.mood == '3'){
+        if (e.mood == '3') {
             return <>
-            <img src={down}/>            
+                <img src={down} />
             </>
         }
-        if(e.mood == '4'){
+        if (e.mood == '4') {
             return <>
-            <img src={sad}/>            
+                <img src={sad} />
             </>
         }
-        if(e.mood == '5'){
+        if (e.mood == '5') {
             return <>
-            <img src={bad}/>            
+                <img src={bad} />
             </>
         }
     };
     const distressTemplate = (e) => {
-        if(e.distress){
+        if (e.distress) {
             return <img src={red_arrow} height="20px"></img>
-        }else{
+        } else {
             return <>
-            -          
+                -
             </>
         }
     };
-    const logout =() =>{
+    const logout = () => {
         Swal.fire({
             title: 'Are you sure you want to logout?',
             showDenyButton: false,
@@ -244,14 +244,14 @@ const UsersB = ({socket}) => {
             confirmButtonText: 'Yes',
             denyButtonText: 'No',
             customClass: {
-              actions: 'my-actions',
-              cancelButton: 'order-1 right-gap',
-              confirmButton: 'order-2',
-              denyButton: 'order-3',
+                actions: 'my-actions',
+                cancelButton: 'order-1 right-gap',
+                confirmButton: 'order-2',
+                denyButton: 'order-3',
             }
-          }).then((result) => {
+        }).then((result) => {
             if (result.isConfirmed) {
-                try{
+                try {
                     dispatch(logoutUser(userB));
                     socket.emit("newLog")
                     Cookie.remove('_auth');
@@ -260,116 +260,116 @@ const UsersB = ({socket}) => {
                     Cookie.remove('_auth_type');
                     localStorage.clear();
                     navigate('/')
-                }catch(e){
+                } catch (e) {
                     console.log(e)
                 }
-              //Swal.fire('Saved!', '', 'success')
+                //Swal.fire('Saved!', '', 'success')
             }
-          })
-          
+        })
 
-       
+
+
     }
-    
+
     useEffect(() => {
         dispatch(getUsers())
         mostrarFecha()
         temporizador()
         //console.log(localStorage.getItem('user'));
-        
-        
-    },[])
 
 
-    socket.on("RTAchangeMood", function(mood){
+    }, [])
+
+
+    socket.on("RTAchangeMood", function (mood) {
         //console.log('llega')s
         dispatch(getUsers())
-        
+
     });
 
-    socket.on("RTAlog", function(){
+    socket.on("RTAlog", function () {
         dispatch(getUsers())
     })
-    socket.on("checkDistress", function(){
+    socket.on("checkDistress", function () {
         dispatch(getUsers())
     })
-    
-    
 
-    return(
+
+
+    return (
         <>
-            
-            {userB.login_today!=1?(
+
+            {userB.login_today != 1 ? (
                 <div className='cont-btn-log'>
-                <Link to= '/'>
-                <button className="btnLo">Go Login!</button>
-                </Link>
+                    <Link to='/'>
+                        <button className="btnLo">Go Login!</button>
+                    </Link>
                 </div>
-            ):(
+            ) : (
                 <>
-                <div>
-                    <Row>
-                    <Col md={3} className='cuerpo-left'>
+                    <div>
+                        <Row>
+                            <Col md={3} className='cuerpo-left'>
 
-                    <img src={titulo}></img>
-                    <ul>
-                        <br/>
-                        <Link to= '/B'>
-                        <button className='boton-selected'><img src={brujula} width='25px' height='25px'/> Users</button>
-                        </Link>
-                        <Link to= '/B/management'>
-                        <button className='boton-side-bar'><img src={management} width='25px' height='25px'/> Management</button>
-                        </Link>
-                        <Link to= '/B/settings'>
-                        <button className='boton-side-bar'><img src={settings} width='25px' height='25px'/> Settings</button>
-                        </Link>   
-                    </ul>
-                    <ul>
-                        <Button className="btnA">
-                            <h5>{hora}</h5>
-                            <h6>{fecha}</h6>
-                        </Button>
-                        
-                    </ul>
-                    <ul>
-                    <Button className="btnA " onClick={logout}>
-                        <img src={logouticon}/> Logout  
-                    </Button>
-                    </ul>
-                    </Col>
+                                <img src={titulo}></img>
+                                <ul>
+                                    <br />
+                                    <Link to='/B'>
+                                        <button className='boton-selected'><img src={brujula} width='25px' height='25px' /> Users</button>
+                                    </Link>
+                                    <Link to='/B/management'>
+                                        <button className='boton-side-bar'><img src={management} width='25px' height='25px' /> Management</button>
+                                    </Link>
+                                    <Link to='/B/settings'>
+                                        <button className='boton-side-bar'><img src={settings} width='25px' height='25px' /> Settings</button>
+                                    </Link>
+                                </ul>
+                                <ul>
+                                    <Button className="btnA">
+                                        <h5>{hora}</h5>
+                                        <h6>{fecha}</h6>
+                                    </Button>
 
-                
+                                </ul>
+                                <ul>
+                                    <Button className="btnA " onClick={logout}>
+                                        <img src={logouticon} /> Logout
+                                    </Button>
+                                </ul>
+                            </Col>
 
-                    <Col md={9} className='cuerpo'>
-                        <div>
-                            <h6>Hi {userB.name},</h6>
-                            <img src={welcome}></img>
-                            
-                        </div>
-                        <br/>
-                    
-                    
-                        <div className='contenedor-tabla'>
-                            <input onChange={(e)=>Search(e)} placeholder='Search...' className='search-barr'></input>
-                            <Tooltip target=".export-buttons>button" position="bottom" />
-                            <div className='contenedor-filters'>
-                                <button type="button" className='button-export' rounded onClick={() => exportCSV(false)} data-pr-tooltip="CSV" ><img src={csv} width='30px' height='35px'/></button>
-                                <button type="button" className='button-export' severity="success" rounded onClick={exportExcel} data-pr-tooltip="XLS" ><img src={excel} width='25px' height='30px'/></button>
-                                <button type="button" className='button-export' severity="warning" rounded onClick={exportPdf} data-pr-tooltip="PDF" ><img src={pdf} width='25px' height='30px'/></button>
-                            </div>
-                            <DataTable ref={dt} value={usersA?usersA:allusersA} tableStyle={{ minWidth: '100%'}} className="table">
-                                <Column  body={actionBodyTemplate3} header="Name" className='colum'></Column>
-                                <Column field="breaks" header="Breaks"  className='colum'></Column>
-                                <Column field="counter" header="Counter"  className='colum'></Column>
-                                <Column body={actionBodyTemplate2} header='Mood' exportable={false}  className='colum'></Column>
-                                <Column body={distressTemplate} header='Distress' className='colum'></Column>
-                                <Column body={actionBodyTemplate} exportable={false}  className='colum'></Column>
-                            </DataTable>
-                        </div>
-                    </Col>
-                    </Row>
-                </div> 
-                <ModalUsersB show={show} handleClose={handleClose} userB={userB} userA={selectedUserA} socket={socket}/>
+
+
+                            <Col md={9} className='cuerpo'>
+                                <div>
+                                    <h6>Hi {userB.name},</h6>
+                                    <img src={welcome}></img>
+
+                                </div>
+                                <br />
+
+
+                                <div className='contenedor-tabla'>
+                                    <input onChange={(e) => Search(e)} placeholder='Search...' className='search-barr'></input>
+                                    <Tooltip target=".export-buttons>button" position="bottom" />
+                                    <div className='contenedor-filters'>
+                                        <button type="button" className='button-export' rounded onClick={() => exportCSV(false)} data-pr-tooltip="CSV" ><img src={csv} width='30px' height='35px' /></button>
+                                        <button type="button" className='button-export' severity="success" rounded onClick={exportExcel} data-pr-tooltip="XLS" ><img src={excel} width='25px' height='30px' /></button>
+                                        <button type="button" className='button-export' severity="warning" rounded onClick={exportPdf} data-pr-tooltip="PDF" ><img src={pdf} width='25px' height='30px' /></button>
+                                    </div>
+                                    <DataTable ref={dt} value={usersA ? usersA : allusersA} tableStyle={{ minWidth: '100%' }} className="table">
+                                        <Column body={actionBodyTemplate3} header="Name" className='colum'></Column>
+                                        <Column field="breaks" header="Breaks" className='colum'></Column>
+                                        <Column field="counter" header="Counter" className='colum'></Column>
+                                        <Column body={actionBodyTemplate2} header='Mood' exportable={false} className='colum'></Column>
+                                        <Column body={distressTemplate} header='Distress' className='colum'></Column>
+                                        <Column body={actionBodyTemplate} exportable={false} className='colum'></Column>
+                                    </DataTable>
+                                </div>
+                            </Col>
+                        </Row>
+                    </div>
+                    <ModalUsersB show={show} handleClose={handleClose} userB={userB} userA={selectedUserA} socket={socket} />
                 </>
             )}
         </>
